@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedSchool Portal - Student Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        medblue: '#1E40AF',
+                        medlightblue: '#3B82F6',
+                        meddarkblue: '#1E3A8A',
+                        medgreen: '#10B981',
+                        medred: '#EF4444',
+                        medpurple: '#8B5CF6',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Add custom styles for the bottom navigation */
+        .bottom-nav {
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Ensure content doesn't get hidden behind the bottom nav */
+        main {
+            padding-bottom: 5rem;
+        }
+        
+        @media (min-width: 768px) {
+            .bottom-nav {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- Top Navigation -->
+    <nav class="bg-white shadow-md fixed top-0 w-full z-50 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center ">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <img src="images/Screenshot_2025-08-21_112549-removebg-preview.png" alt="UniHealth Logo" class="h-10 w-auto mr-2" id="logo">
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div class="ml-2 flex items-center md:ml-3 space-x-2" id="user-info">
+                        
+                        <a href="Messages.html" class="relative bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none">
+                            <i class="fas fa-bell h-8 w-8 text-lg"></i>
+                            <span class="absolute top-1 right-1 inline-block w-2 h-2 bg-medred rounded-full"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="pt-20 py-6 mb-20">
+        
+        <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Header -->
+            <div class="bg-medblue rounded-xl shadow-lg overflow-hidden mb-8 text-white">
+                <div class="p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center">
+                    <div class="flex-1">
+                        <h1 class="text-1xl md:text-1xl font-bold mb-1">Welcome back, <span class="text-blue-200">Sipho Masango</span></h1>
+                        <div class="flex items-center ">
+                            <p class="text-blue-200 opacity-90 text-sm font-bold mr-2">Student no : <span class="text-white"> 221136255</span></p>
+                        </div>
+                        <div class="flex items-center">
+                            <p class="text-blue-200 opacity-90 text-sm font-bold">Campus : <span class="text-white">Pretoria Campus</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 flex md:mt-0 md:ml-4 space-x-3">
+                <a href="MedicalRecoard.html" class="inline-flex items-center px-4 py-2 border border-medblue rounded-md shadow-sm text-sm font-medium text-medblue bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-medlightblue transition">
+                    <i class="fas fa-book-medical mr-2 text-medlightblue"></i> View Medical record
+                </a>
+                <a href="NewAppointment.html" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-medblue hover:bg-meddarkblue focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-medblue transition">
+                    <i class="fas fa-plus-circle mr-2"></i> New Appointment
+                </a>
+            </div>
+           
+
+            <!-- Main content -->
+            <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-1">
+                <!-- Upcoming Schedule -->
+                <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                    <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-medblue"><i class="fas fa-book-medical mr-2"></i> Upcoming Appointments</h3>
+                        
+                    </div>
+                    <ul class="divide-y divide-gray-300">
+                        <li class="px-4 py-4 sm:px-6">
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm font-medium text-medblue truncate">General Check-up</p>
+                                <div class="ml-2 flex-shrink-0 flex">
+                                    <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Oct 18, 2:30 PM</p>
+                                </div>
+                            </div>
+                            <div class="mt-2 flex justify-between">
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <i class="fas fa-map-marker-alt mr-1.5 text-gray-400"></i>
+                                    TUT Main Campus Clinic, Room 205
+                                </div>
+                            </div>
+                        </li>
+                        
+                        <li class="px-4 py-4 sm:px-6">
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm font-medium text-medblue truncate">Allergy Consultation</p>
+                                <div class="ml-2 flex-shrink-0 flex">
+                                    <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Oct 25, 10:00 AM</p>
+                                </div>
+                            </div>
+                            <div class="mt-2 flex justify-between">
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <i class="fas fa-map-marker-alt mr-1.5 text-gray-400"></i>
+                                    TUT Main Campus Allergy Unit, Room 104
+                                </div>
+                            </div>
+                        </li>
+                        <li class="px-4 py-4 sm:px-6">
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm font-medium text-medblue truncate">Dental Cleaning</p>
+                                <div class="ml-2 flex-shrink-0 flex">
+                                    <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Nov 5, 11:15 AM</p>
+                                </div>
+                            </div>
+                            <div class="mt-2 flex justify-between">
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <i class="fas fa-map-marker-alt mr-1.5 text-gray-400"></i>
+                                    TUT Main Campus Dental Clinic, Room 312
+                                </div>
+                            </div>
+                        </li>
+                       
+                    </ul>
+                    <div class="bg-gray-100 px-4 py-4 sm:px-6">
+                        <div class="text-sm text-center">
+                            <a href="Appointments.html" class="font-medium text-medlightblue hover:text-medblue">View appointment</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Quick Actions</h3>
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2">
+
+                    <a href="#" class="bg-white overflow-hidden shadow rounded-lg p-2 flex items-center hover:bg-gray-50 transition">
+                        <div class="bg-medpurple rounded-md p-2 mr-4">
+                            <i class="fas fa-file-medical-alt text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">Mental Health</p>
+                            <p class="text-xs text-gray-500">Engage with therapists</p>
+                        </div>
+                    </a> 
+
+                    <a href="#" class="bg-white overflow-hidden shadow rounded-lg p-2 flex items-center hover:bg-gray-50 transition">
+                        <div class="bg-medgreen rounded-md p-2 mr-4">
+                            <i class="fas fa-phone-alt text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">Campus Emergency Contacts</p>
+                            <p class="text-xs text-gray-500">Access on-campus emergency numbers</p>
+                        </div>
+                    </a>
+
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Bottom Navigation (Mobile Only) -->
+    <nav class="bottom-nav fixed bottom-0 w-full bg-white border-t border-gray-200 z-40 md:hidden">
+        <div class="grid grid-cols-4 gap-1 py-2">
+            <a href="index.html" class="flex flex-col items-center justify-center p-2 text-medblue">
+                <i class="fas fa-home text-lg"></i>
+                <span class="text-xs mt-1">Home</span>
+            </a>
+            <a href="Appointments.html" class="flex flex-col items-center justify-center p-2 text-gray-500 hover:text-medblue">
+                <i class="fas fa-calendar-check text-lg"></i>
+                <span class="text-xs mt-1">Appointments</span>
+            </a>
+            <a href="MedicalRecoard.html" class="flex flex-col items-center justify-center p-2 text-gray-500 hover:text-medblue">
+                <i class="fas fa-file-medical text-lg"></i>
+                <span class="text-xs mt-1">Records</span>
+            </a>
+            <a href="Profile.html" class="flex flex-col items-center justify-center p-2 text-gray-500 hover:text-medblue">
+                <i class="fas fa-user text-lg"></i>
+                <span class="text-xs mt-1">Profile</span>
+            </a>
+        </div>
+    </nav>
+</body>
+</html>

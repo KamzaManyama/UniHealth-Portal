@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedSchool Portal - Messages</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        medblue: '#1E40AF',
+                        medlightblue: '#3B82F6',
+                        meddarkblue: '#1E3A8A',
+                        medgreen: '#10B981',
+                        medred: '#EF4444',
+                        medpurple: '#8B5CF6',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .modal {
+            transition: opacity 0.25s ease;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .message-card {
+            transition: all 0.3s ease;
+        }
+        .message-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .filter-option {
+            transition: all 0.2s ease;
+        }
+        .filter-option:hover {
+            background-color: #EFF6FF;
+        }
+        .unread {
+            border-left: 4px solid #3B82F6;
+        }
+        .archived {
+            opacity: 0.8;
+            background-color: #F9FAFB;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- Top Navigation -->
+    <nav class="bg-white shadow-md fixed top-0 w-full z-50 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <img src="C:\Users\kmany\Downloads\Screenshot_2025-08-21_112549-removebg-preview.png" alt="UniHealth Logo" class="h-8 w-auto mr-2" id="logo">
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div class="ml-2 flex items-center md:ml-3 space-x-2" id="user-info">
+                        <div class="ml-3 relative flex items-center">
+                            <img class="h-8 w-8 rounded-full mr-2" src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="user profile">
+                        </div>
+                        <button class="relative bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none">
+                            <i class="fas fa-bell h-8 w-8 text-lg"></i>
+                            <span class="absolute top-1 right-1 inline-block w-2 h-2 bg-medred rounded-full"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="pt-20 py-6 mb-20">
+        <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Header -->
+            
+
+            <!-- Messages List -->
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-4 py-5 border-b border-gray-200 sm:px-6 flex justify-between items-center">
+                    <h3 class="text-lg leading-6 font-medium text-medblue">
+                        <i class="fas fa-inbox mr-2"></i> Inbox
+                        <span id="message-count" class="text-sm font-normal text-gray-500 ml-2">Showing 6 messages</span>
+                    </h3>
+                  
+                </div>
+                
+                <div id="messages-container">
+                    <!-- Message 1 - Unread -->
+                    <div class="border-b border-gray-200 message-card unread" data-status="unread" data-type="appointment" data-date="2023-10-18" data-id="1">
+                        <div class="px-4 py-4 sm:px-6">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 pt-1">
+                                    <input type="checkbox" class="message-checkbox h-4 w-4 text-medblue focus:ring-medlightblue border-gray-300 rounded">
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <p class="text-sm font-medium text-gray-900">Appointment Confirmation</p>
+                                        <div class="ml-2 flex-shrink-0 flex">
+                                            <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Today, 10:30 AM</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-1 flex items-center justify-between">
+                                        <p class="text-sm text-gray-500">Your appointment with Dr. Smith has been confirmed for October 25 at 2:30 PM</p>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Appointment</span>
+                                            <button class="text-gray-400 hover:text-gray-500" onclick="toggleStar(1)">
+                                                <i class="far fa-star" id="star-1"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-2 flex justify-end space-x-2">
+                                <button type="button" class="inline-flex items-center px-2.5 py-1.5 border border-gray-300 rounded-md text-xs font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-medlightblue" onclick="markAsRead(1)">
+                                    Mark as Read
+                                </button>
+                                <button type="button" class="inline-flex items-center px-2.5 py-1.5 border border-transparent rounded-md text-xs font-medium text-white bg-medred hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" onclick="deleteMessage(1)">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Message 2 - Unread -->
+                    <div class="border-b border-gray-200 message-card unread" data-status="unread" data-type="medical" data-date="2023-10-17" data-id="2">
+                        <div class="px-4 py-4 sm:px-6">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 pt-1">
+                                    <input type="checkbox" class="message-checkbox h-4 w-4 text-medblue focus:ring-medlightblue border-gray-300 rounded">
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <p class="text-sm font-medium text-gray-900">Lab Results Available</p>
+                                        <div class="ml-2 flex-shrink-0 flex">
+                                            <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Yesterday, 3:45 PM</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-1 flex items-center justify-between">
+                                        <p class="text-sm text-gray-500">Your recent blood test results are now available in your patient portal</p>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Medical</span>
+                                            <button class="text-gray-400 hover:text-gray-500" onclick="toggleStar(2)">
+                                                <i class="far fa-star" id="star-2"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-2 flex justify-end space-x-2">
+                                <button type="button" class="inline-flex items-center px-2.5 py-1.5 border border-gray-300 rounded-md text-xs font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-medlightblue" onclick="markAsRead(2)">
+                                    Mark as Read
+                                </button>
+                                <button type="button" class="inline-flex items-center px-2.5 py-1.5 border border-transparent rounded-md text-xs font-medium text-white bg-medred hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" onclick="deleteMessage(2)">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Message 3 - Read -->
+                    <div class="border-b border-gray-200 message-card" data-status="read" data-type="reminder" data-date="2023-10-15" data-id="3">
+                        <div class="px-4 py-4 sm:px-6">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 pt-1">
+                                    <input type="checkbox" class="message-checkbox h-4 w-4 text-medblue focus:ring-medlightblue border-gray-300 rounded">
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <p class="text-sm font-medium text-gray-900">Medication Refill Reminder</p>
+                                        <div class="ml-2 flex-shrink-0 flex">
+                                            <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Oct 15, 9:15 AM</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-1 flex items-center justify-between">
+                                        <p class="text-sm text-gray-500">Your prescription for Medication X is due for a refill. Please contact the pharmacy</p>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Reminder</span>
+                                            <button class="text-yellow-400 hover:text-yellow-500" onclick="toggleStar(3)">
+                                                <i class="fas fa-star" id="star-3"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-2 flex justify-end space-x-2">
+                                <button type="button" class="inline-flex items-center px-2.5 py-1.5 border border-gray-300 rounded-md text-xs font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-medlightblue" onclick="markAsUnread(3)">
+                                    Mark as Unread
+                                </button>
+                                <button type="button" class="inline-flex items-center px-2.5 py-1.5 border border-transparent rounded-md text-xs font-medium text-white bg-medred hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" onclick="deleteMessage(3)">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Message 4 - Read -->
+                    <div class="border-b border-gray-200 message-card" data-status="read" data-type="system" data-date="2023-10-10" data-id="4">
+                        <div class="px-4 py-4 sm:px-6">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 pt-1">
+                                    <input type="checkbox" class="message-checkbox h-4 w-4 text-medblue focus:ring-medlightblue border-gray-300 rounded">
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <p class="text-sm font-medium text-gray-900">System Maintenance Notice</p>
+                                        <div class="ml-2 flex-shrink-0 flex">
+                                            <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Oct 10, 5:30 PM</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-1 flex items-center justify-between">
+                                        <p class="text-sm text-gray-500">The patient portal will be unavailable this Sunday from 2-4 AM for scheduled maintenance</p>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">System</span>
+                                            <button class="text-gray-400 hover:text-gray-500" onclick="toggleStar(4)">
+                                                <i class="far fa-star" id="star-4"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-2 flex justify-end space-x-2">
+                                <button type="button" class="inline-flex items-center px-2.5 py-1.5 border border-gray-300 rounded-md text-xs font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-medlightblue" onclick="markAsUnread(4)">
+                                    Mark as Unread
+                                </button>
+                                <button type="button" class="inline-flex items-center px-2.5 py-1.5 border border-transparent rounded-md text-xs font-medium text-white bg-medred hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" onclick="deleteMessage(4)">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Message 5 - Archived -->
+                    <div class="border-b border-gray-200 message-card archived hidden" data-status="read" data-type="appointment" data-date="2023-09-05" data-id="5" data-archived="true">
+                        <div class="px-4 py-4 sm:px-6">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 pt-1">
+                                    <input type="checkbox" class="message-checkbox h-4 w-4 text-medblue focus:ring-medlightblue border-gray-300 rounded">
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <p class="text-sm font-medium text-gray-900">Appointment Reminder</p>
+                                        <div class="ml-2 flex-shrink-0 flex">
+                                            <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Sept 5, 11:20 AM</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-1 flex items-center justify-between">
+                                        <p class="text-sm text-gray-500">Friendly reminder about your appointment with Dr. Johnson tomorrow at 10 AM</p>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Appointment</span>
+                                            <button class="text-gray-400 hover:text-gray-500" onclick="toggleStar(5)">
+                                                <i class="far fa-star" id="star-5"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-2 flex justify-end space-x-2">
+                                <span class="inline-flex items-center px-2.5 py-1.5 rounded-md text-xs font-medium bg-gray-100 text-gray-800">
+                                    Archived
+                                </span>
+                                <button type="button" class="inline-flex items-center px-2.5 py-1.5 border border-gray-300 rounded-md text-xs font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-medlightblue" onclick="unarchiveMessage(5)">
+                                    Unarchive
+                                </button>
+                                <button type="button" class="inline-flex items-center px-2.5 py-1.5 border border-transparent rounded-md text-xs font-medium text-white bg-medred hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" onclick="deleteMessage(5)">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Message 6 - Archived -->
+                    <div class="border-b border-gray-200 message-card archived hidden" data-status="read" data-type="system" data-date="2023-08-22" data-id="6" data-archived="true">
+                        <div class="px-4 py-4 sm:px-6">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 pt-1">
+                                    <input type="checkbox" class="message-checkbox h-4 w-4 text-medblue focus:ring-medlightblue border-gray-300 rounded">
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <p class="text-sm font-medium text-gray-900">New Features Available</p>
+                                        <div class="ml-2 flex-shrink-0 flex">
+                                            <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Aug 22, 2:15 PM</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-1 flex items-center justify-between">
+                                        <p class="text-sm text-gray-500">We've added new features to the patient portal. Check out the updated appointment scheduling system</p>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">System</span>
+                                            <button class="text-gray-400 hover:text-gray-500" onclick="toggleStar(6)">
+                                                <i class="far fa-star" id="star-6"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-2 flex justify-end space-x-2">
+                                <span class="inline-flex items-center px-2.5 py-1.5 rounded-md text-xs font-medium bg-gray-100 text-gray-800">
+                                    Archived
+                                </span>
+                                <button type="button" class="inline-flex items-center px-2.5 py-1.5 border border-gray-300 rounded-md text-xs font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-medlightblue" onclick="unarchiveMessage(6)">
+                                    Unarchive
+                                </button>
+                                <button type="button" class="inline-flex items-center px-2.5 py-1.5 border border-transparent rounded-md text-xs font-medium text-white bg-medred hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" onclick="deleteMessage(6)">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- No results message (hidden by default) -->
+                <div id="no-results" class="hidden px-4 py-12 text-center">
+                    <i class="fas fa-envelope-open-text text-4xl text-gray-300 mb-3"></i>
+                    <h3 class="text-lg font-medium text-gray-700">No messages found</h3>
+                    <p class="text-gray-500 mt-1">Try adjusting your filters to see more results.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+      <!-- Bottom Navigation (Mobile Only) -->
+      <nav class="bottom-nav fixed bottom-0 w-full bg-white border-t border-gray-200 z-40 md:hidden">
+        <div class="grid grid-cols-4 gap-1 py-2">
+            <a href="index.html" class="flex flex-col items-center justify-center p-2 text-medblue">
+                <i class="fas fa-home text-lg"></i>
+                <span class="text-xs mt-1">Home</span>
+            </a>
+            <a href="Appointments.html" class="flex flex-col items-center justify-center p-2 text-gray-500 hover:text-medblue">
+                <i class="fas fa-calendar-check text-lg"></i>
+                <span class="text-xs mt-1">Appointments</span>
+            </a>
+            <a href="MedicalRecoard.html" class="flex flex-col items-center justify-center p-2 text-gray-500 hover:text-medblue">
+                <i class="fas fa-file-medical text-lg"></i>
+                <span class="text-xs mt-1">Records</span>
+            </a>
+            <a href="Profile.html" class="flex flex-col items-center justify-center p-2 text-gray-500 hover:text-medblue">
+                <i class="fas fa-user text-lg"></i>
+                <span class="text-xs mt-1">Profile</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="fixed z-10 inset-0 overflow-y-auto hidden" id="delete-modal">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-medred sm:mx-0 sm:h-10 sm:w-10">
+                            <i class="fas fa-exclamation-triangle text-white"></i>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                                Delete Message
+                            </h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-500">
+                                    Are you sure you want to delete this message? This action cannot be undone.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-medred text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm" onclick="confirmDelete()">
+                        Yes, Delete Message
+                    </button>
+                    <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-medlightblue sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onclick="closeModal('delete-modal')">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Store the ID of the message to be deleted
+        let messageToDelete = null;
+        
+        // Toggle star (favorite) status
+        function toggleStar(messageId) {
+            const starIcon = document.getElementById(`star-${messageId}`);
+            if (starIcon.classList.contains('far')) {
+                starIcon.classList.remove('far');
+                starIcon.classList.add('fas', 'text-yellow-400');
+            } else {
+                starIcon.classList.remove('fas', 'text-yellow-400');
+                starIcon.classList.add('far');
+            }
+        }
+        
+        // Mark message as read
+        function markAsRead(messageId) {
+            const message = document.querySelector(`[data-id="${messageId}"]`);
+            message.setAttribute('data-status', 'read');
+            message.classList.remove('unread');
+            
+            // Update the button
+            const button = message.querySelector('button[onclick^="markAsRead"]');
+            if (button) {
+                button.onclick = () => markAsUnread(messageId);
+                button.innerHTML = 'Mark as Unread';
+            }
+            
+            updateMessageCount();
+        }
+        
+        // Mark message as unread
+        function markAsUnread(messageId) {
+            const message = document.querySelector(`[data-id="${messageId}"]`);
+            message.setAttribute('data-status', 'unread');
+            message.classList.add('unread');
+            
+            // Update the button
+            const button = message.querySelector('button[onclick^="markAsUnread"]');
+            if (button) {
+                button.onclick = () => markAsRead(messageId);
+                button.innerHTML = 'Mark as Read';
+            }
+            
+            updateMessageCount();
+        }
+        
+        // Open delete confirmation modal
+        function deleteMessage(messageId) {
+            messageToDelete = messageId;
+            document.getElementById('delete-modal').classList.remove('hidden');
+        }
+        
+        // Confirm and execute deletion
+        function confirmDelete() {
+            if (messageToDelete) {
+                const message = document.querySelector(`[data-id="${messageToDelete}"]`);
+                message.style.display = 'none';
+                
+                // Check if we should show the no results message
+                const visibleMessages = document.querySelectorAll('.message-card:not(.hidden)');
+                const noResults = document.getElementById('no-results');
+                
+                if (visibleMessages.length === 0) {
+                    noResults.classList.remove('hidden');
+                }
+                
+                updateMessageCount();
+            }
+            closeModal('delete-modal');
+        }
+        
+        // Archive a message
+        function archiveMessage(messageId) {
+            const message = document.querySelector(`[data-id="${messageId}"]`);
+            message.setAttribute('data-archived', 'true');
+            message.classList.add('archived', 'hidden');
+            
+            // If we're currently viewing archived messages, show it
+            if (document.getElementById('view-archived').value === 'archived') {
+                message.classList.remove('hidden');
+            }
+            
+            updateMessageCount();
+        }
+        
+        // Unarchive a message
+        function unarchiveMessage(messageId) {
+            const message = document.querySelector(`[data-id="${messageId}"]`);
+            message.setAttribute('data-archived', 'false');
+            message.classList.remove('archived');
+            
+            // If we're currently viewing active messages, show it
+            if (document.getElementById('view-archived').value === 'active') {
+                message.classList.remove('hidden');
+            }
+            
+            updateMessageCount();
+        }
+        
+        // Modal functions
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+        
+        // Close modals if clicked outside
+        window.onclick = function(event) {
+            if (event.target.id === 'delete-modal') {
+                closeModal('delete-modal');
+            }
+        }
+        
+        // Update the message count text
+        function updateMessageCount() {
+            const visibleMessages = document.querySelectorAll('.message-card:not(.hidden)');
+            const unreadMessages = document.querySelectorAll('.message-card.unread:not(.hidden)');
+            
+            document.getElementById('message-count').textContent = 
+                `Showing ${visibleMessages.length} messages, ${unreadMessages.length} unread`;
+        }
+        
+        // Filter functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusFilter = document.getElementById('status-filter');
+            const typeFilter = document.getElementById('type-filter');
+            const dateFilter = document.getElementById('date-filter');
+            const viewArchived = document.getElementById('view-archived');
+            const clearFiltersBtn = document.getElementById('clear-filters');
+            const markAllReadBtn = document.getElementById('mark-all-read');
+            const deleteSelectedBtn = document.getElementById('delete-selected');
+            const archiveOldBtn = document.getElementById('archive-old');
+            
+            const messages = document.querySelectorAll('.message-card');
+            const noResultsMessage = document.getElementById('no-results');
+            
+            // Add event listeners to filters
+            statusFilter.addEventListener('change', filterMessages);
+            typeFilter.addEventListener('change', filterMessages);
+            dateFilter.addEventListener('change', filterMessages);
+            viewArchived.addEventListener('change', toggleArchivedView);
+            clearFiltersBtn.addEventListener('click', clearFilters);
+            markAllReadBtn.addEventListener('click', markAllAsRead);
+            deleteSelectedBtn.addEventListener('click', deleteSelectedMessages);
+            archiveOldBtn.addEventListener('click', archiveOldMessages);
+            
+            function filterMessages() {
+                const statusValue = statusFilter.value;
+                const typeValue = typeFilter.value;
+                const dateValue = dateFilter.value;
+                const viewValue = viewArchived.value;
+                
+                let visibleCount = 0;
+                
+                messages.forEach(message => {
+                    const status = message.getAttribute('data-status');
+                    const type = message.getAttribute('data-type');
+                    const date = message.getAttribute('data-date');
+                    const archived = message.getAttribute('data-archived') === 'true';
+                    
+                    // First filter by view (active vs archived)
+                    const viewMatch = (viewValue === 'active' && !archived) || (viewValue === 'archived' && archived);
+                    
+                    // Then filter by other criteria
+                    const statusMatch = statusValue === 'all' || status === statusValue;
+                    const typeMatch = typeValue === 'all' || type === typeValue;
+                    const dateMatch = dateValue === 'all' || isDateInRange(date, dateValue);
+                    
+                    if (viewMatch && statusMatch && typeMatch && dateMatch) {
+                        message.classList.remove('hidden');
+                        visibleCount++;
+                    } else {
+                        message.classList.add('hidden');
+                    }
+                });
+                
+                // Show/hide no results message
+                if (visibleCount === 0) {
+                    noResultsMessage.classList.remove('hidden');
+                } else {
+                    noResultsMessage.classList.add('hidden');
+                }
+                
+                updateMessageCount();
+            }
+            
+            function toggleArchivedView() {
+                filterMessages();
+            }
+            
+            function isDateInRange(dateString, range) {
+                const messageDate = new Date(dateString);
+                const today = new Date();
+                
+                switch(range) {
+                    case 'today':
+                        return dateString === formatDate(today);
+                    case 'week':
+                        const weekAgo = new Date();
+                        weekAgo.setDate(today.getDate() - 7);
+                        return messageDate >= weekAgo && messageDate <= today;
+                    case 'month':
+                        const monthAgo = new Date();
+                        monthAgo.setMonth(today.getMonth() - 1);
+                        return messageDate >= monthAgo && messageDate <= today;
+                    default:
+                        return true;
+                }
+            }
+            
+            function formatDate(date) {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+            
+            function clearFilters() {
+                statusFilter.value = 'all';
+                typeFilter.value = 'all';
+                dateFilter.value = 'all';
+                filterMessages();
+            }
+            
+            function markAllAsRead() {
+                const visibleMessages = document.querySelectorAll('.message-card:not(.hidden)');
+                visibleMessages.forEach(message => {
+                    const messageId = message.getAttribute('data-id');
+                    markAsRead(messageId);
+                });
+            }
+            
+            function deleteSelectedMessages() {
+                const selectedCheckboxes = document.querySelectorAll('.message-checkbox:checked');
+                if (selectedCheckboxes.length === 0) {
+                    alert('Please select at least one message to delete.');
+                    return;
+                }
+                
+                if (confirm(`Are you sure you want to delete ${selectedCheckboxes.length} message(s)?`)) {
+                    selectedCheckboxes.forEach(checkbox => {
+                        const message = checkbox.closest('.message-card');
+                        message.style.display = 'none';
+                    });
+                    
+                    // Check if we should show the no results message
+                    const visibleMessages = document.querySelectorAll('.message-card:not(.hidden)');
+                    if (visibleMessages.length === 0) {
+                        noResultsMessage.classList.remove('hidden');
+                    }
+                    
+                    updateMessageCount();
+                }
+            }
+            
+            function archiveOldMessages() {
+                const thirtyDaysAgo = new Date();
+                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                
+                const messagesToArchive = document.querySelectorAll('.message-card');
+                let archivedCount = 0;
+                
+                messagesToArchive.forEach(message => {
+                    const messageDate = new Date(message.getAttribute('data-date'));
+                    const isArchived = message.getAttribute('data-archived') === 'true';
+                    
+                    if (!isArchived && messageDate < thirtyDaysAgo) {
+                        const messageId = message.getAttribute('data-id');
+                        archiveMessage(messageId);
+                        archivedCount++;
+                    }
+                });
+                
+                alert(`Archived ${archivedCount} messages older than 30 days.`);
+            }
+            
+            // Initialize
+            updateMessageCount();
+        });
+    </script>
+</body>
+</html>

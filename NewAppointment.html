@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedSchool Portal - Book Appointment</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        medblue: '#1E40AF',
+                        medlightblue: '#3B82F6',
+                        meddarkblue: '#1E3A8A',
+                        medgreen: '#10B981',
+                        medred: '#EF4444',
+                        medpurple: '#8B5CF6',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .form-card {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .form-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .input-field:focus {
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- Top Navigation -->
+    <nav class="bg-white shadow-md fixed top-0 w-full z-50 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <img src="C:\Users\kmany\Downloads\Screenshot_2025-08-21_112549-removebg-preview.png" alt="UniHealth Logo" class="h-8 w-auto mr-2" id="logo">
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div class="ml-2 flex items-center md:ml-3 space-x-2" id="user-info">
+                        <div class="ml-3 relative flex items-center">
+                            <img class="h-8 w-8 rounded-full mr-2" src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="user profile">
+                        </div>
+                        <button class="relative bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none">
+                            <i class="fas fa-bell h-8 w-8 text-lg"></i>
+                            <span class="absolute top-1 right-1 inline-block w-2 h-2 bg-medred rounded-full"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="pt-20 py-6 mb-20">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+           
+
+            <!-- Booking Form -->
+            <div class="bg-white rounded-lg form-card p-6 mb-8">
+                <form id="appointment-form">
+                    <!-- Service Type -->
+                    <div class="mb-6">
+                        <label for="service-type" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-stethoscope mr-1 text-medlightblue"></i> Service Type <span class="text-medred">*</span>
+                        </label>
+                        <select id="service-type" name="service-type" required class="input-field w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medlightblue focus:border-medlightblue">
+                            <option value="" disabled selected>Select a service type</option>
+                            <option value="general">General Consultation</option>
+                            <option value="dental">Dental</option>
+                            <option value="mental">Mental Health</option>
+                            <option value="sexual">Sexual Health</option>
+                            <option value="followup">Follow-up</option>
+                            <option value="vaccination">Vaccination</option>
+                            <option value="allergy">Allergy Testing</option>
+                            <option value="physical">Physical Examination</option>
+                        </select>
+                        <p class="text-xs text-gray-500 mt-1">Helps the clinic prepare the right staff and resources</p>
+                    </div>
+
+                    <!-- Preferred Date -->
+                    <div class="mb-6">
+                        <label for="preferred-date" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="far fa-calendar-alt mr-1 text-medlightblue"></i> Preferred Date <span class="text-medred">*</span>
+                        </label>
+                        <input type="date" id="preferred-date" name="preferred-date" required min="" class="input-field w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medlightblue focus:border-medlightblue">
+                        <p class="text-xs text-gray-500 mt-1">Select your preferred date for the appointment</p>
+                    </div>
+
+                    <!-- Preferred Time Slot -->
+                    <div class="mb-6">
+                        <label for="preferred-time" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="far fa-clock mr-1 text-medlightblue"></i> Preferred Time Slot <span class="text-medred">*</span>
+                        </label>
+                        <select id="preferred-time" name="preferred-time" required class="input-field w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medlightblue focus:border-medlightblue">
+                            <option value="" disabled selected>Select a time slot</option>
+                            <option value="9:00">9:00 AM - 9:30 AM</option>
+                            <option value="9:30">9:30 AM - 10:00 AM</option>
+                            <option value="10:00">10:00 AM - 10:30 AM</option>
+                            <option value="10:30">10:30 AM - 11:00 AM</option>
+                            <option value="11:00">11:00 AM - 11:30 AM</option>
+                            <option value="11:30">11:30 AM - 12:00 PM</option>
+                            <option value="14:00">2:00 PM - 2:30 PM</option>
+                            <option value="14:30">2:30 PM - 3:00 PM</option>
+                            <option value="15:00">3:00 PM - 3:30 PM</option>
+                            <option value="15:30">3:30 PM - 4:00 PM</option>
+                        </select>
+                        <p class="text-xs text-gray-500 mt-1">Available time slots based on clinic capacity</p>
+                    </div>
+
+                    <!-- Reason for Visit -->
+                    <div class="mb-6">
+                        <label for="reason" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-comment-medical mr-1 text-medlightblue"></i> Reason for Visit (Optional)
+                        </label>
+                        <textarea id="reason" name="reason" rows="3" placeholder="Briefly describe the reason for your visit" class="input-field w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medlightblue focus:border-medlightblue"></textarea>
+                        <p class="text-xs text-gray-500 mt-1">Gives the clinic context for better triage</p>
+                    </div>
+
+                    <!-- Urgency Level -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-exclamation-circle mr-1 text-medlightblue"></i> Urgency Level (Optional)
+                        </label>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div class="flex items-center">
+                                <input id="urgency-routine" type="radio" name="urgency" value="routine" class="h-4 w-4 text-medlightblue focus:ring-medlightblue">
+                                <label for="urgency-routine" class="ml-2 block text-sm text-gray-700">
+                                    <span class="px-2 py-1 rounded-full bg-gray-100 text-gray-800">Routine</span>
+                                </label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="urgency-urgent" type="radio" name="urgency" value="urgent" class="h-4 w-4 text-medlightblue focus:ring-medlightblue">
+                                <label for="urgency-urgent" class="ml-2 block text-sm text-gray-700">
+                                    <span class="px-2 py-1 rounded-full bg-yellow-100 text-yellow-800">Urgent</span>
+                                </label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="urgency-emergency" type="radio" name="urgency" value="emergency" class="h-4 w-4 text-medlightblue focus:ring-medlightblue">
+                                <label for="urgency-emergency" class="ml-2 block text-sm text-gray-700">
+                                    <span class="px-2 py-1 rounded-full bg-red-100 text-red-800">Emergency</span>
+                                </label>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">Helps clinic prioritize appointments</p>
+                    </div>
+
+                    <!-- Consent Confirmation -->
+                    <div class="mb-6">
+                        <div class="flex items-start">
+                            <div class="flex items-center h-5">
+                                <input id="consent" name="consent" type="checkbox" required class="input-field h-4 w-4 text-medlightblue focus:ring-medlightblue border-gray-300 rounded">
+                            </div>
+                            <div class="ml-3 text-sm">
+                                <label for="consent" class="font-medium text-gray-700">I agree to the clinic's terms of service and privacy policy <span class="text-medred">*</span></label>
+                                <p class="text-gray-500">I understand that my personal health information will be handled in accordance with the clinic's privacy policy</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Information (Read-only) -->
+                    <div class="border-t border-gray-200 pt-6 mb-6">
+                        <h3 class="text-md font-medium text-gray-700 mb-4"><i class="fas fa-info-circle mr-1 text-medlightblue"></i> System Information</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500">Campus</label>
+                                <p class="text-sm font-medium text-gray-800">Main Campus</p>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500">Student ID</label>
+                                <p class="text-sm font-medium text-gray-800">ST12345678</p>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500">Appointment Status</label>
+                                <p class="text-sm font-medium text-gray-800">Will be generated upon submission</p>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500">Appointment ID</label>
+                                <p class="text-sm font-medium text-gray-800">Will be generated upon submission</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-medlightblue">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-medblue hover:bg-meddarkblue focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-medlightblue">
+                            Book Appointment
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+           
+        </div>
+    </main>
+
+      <!-- Bottom Navigation (Mobile Only) -->
+      <nav class="bottom-nav fixed bottom-0 w-full bg-white border-t border-gray-200 z-40 md:hidden">
+        <div class="grid grid-cols-4 gap-1 py-2">
+            <a href="index.html" class="flex flex-col items-center justify-center p-2 hover:text-medblue">
+                <i class="fas fa-home text-lg"></i>
+                <span class="text-xs mt-1">Home</span>
+            </a>
+            <a href="Appointments.html" class="flex flex-col items-center justify-center p-2 text-gray-500 hover:text-medblue">
+                <i class="fas fa-calendar-check text-lg"></i>
+                <span class="text-xs mt-1">Appointments</span>
+            </a>
+            <a href="MedicalRecoard.html" class="flex flex-col items-center justify-center p-2 text-medblue ">
+                <i class="fas fa-file-medical text-lg"></i>
+                <span class="text-xs mt-1">Records</span>
+            </a>
+            <a href="Profile.html" class="flex flex-col items-center justify-center p-2 text-gray-500 hover:text-medblue">
+                <i class="fas fa-user text-lg"></i>
+                <span class="text-xs mt-1">Profile</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Success Modal -->
+    <div class="fixed z-10 inset-0 overflow-y-auto hidden" id="success-modal">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <i class="fas fa-check text-green-600"></i>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900">
+                                Appointment Request Submitted
+                            </h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-500">
+                                    Your appointment request has been successfully submitted. You will receive a confirmation email shortly with your appointment details.
+                                </p>
+                            </div>
+                            <div class="mt-4 bg-blue-50 p-3 rounded-md">
+                                <h4 class="text-sm font-medium text-blue-800">Appointment Reference: <span id="appointment-ref">APT20231015001</span></h4>
+                                <p class="text-xs text-blue-600 mt-1">Please keep this reference number for future inquiries</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-medblue text-base font-medium text-white hover:bg-meddarkblue focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-medlightblue sm:ml-3 sm:w-auto sm:text-sm" onclick="closeModal('success-modal')">
+                        Done
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set minimum date to today
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            const todayStr = `${yyyy}-${mm}-${dd}`;
+            document.getElementById('preferred-date').min = todayStr;
+            
+            // Form submission handler
+            document.getElementById('appointment-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                // Generate a random appointment ID
+                const ref = 'APT' + new Date().getTime() + Math.floor(Math.random() * 100);
+                document.getElementById('appointment-ref').textContent = ref;
+                document.getElementById('success-modal').classList.remove('hidden');
+            });
+        });
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

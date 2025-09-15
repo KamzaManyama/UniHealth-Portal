@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ubuntu Vault</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        medblue: '#1E40AF',
+                        medlightblue: '#3B82F6',
+                        meddarkblue: '#1E3A8A',
+                        medgreen: '#10B981',
+                        medred: '#EF4444',
+                        medpurple: '#8B5CF6',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Ubuntu', sans-serif;
+        }
+        .input-field {
+            transition: all 0.3s ease;
+        }
+        .input-field:focus {
+            box-shadow: 0 0 0 3px #1E40AF;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-cover bg-center bg-no-repeat relative" style="background-image: url('images/health.png');">
+    <!-- Dark overlay -->
+    <div class="absolute inset-0 bg-black bg-opacity-60"></div>
+    
+    <!-- Main content -->
+    <div class="relative z-10 min-h-screen flex flex-col items-center justify-center px-6">
+        <!-- Logo and title -->
+        <div class="text-center mb-12">
+            <!-- Ubuntu logo -->
+            <div class="w-24 h-12 mx-auto mb-4 flex items-center justify-center">
+                <div class="flex-shrink-0 flex items-center">
+                    <img src="images/white-login.png" alt="UniHealth Logo" class="h-24 w-auto mr-2" id="logo">
+                </div>
+            </div>
+            
+            <!-- Decorative line -->
+            <div class="w-16 h-px bg-white mx-auto mb-6"></div>
+            
+         
+        </div>
+        
+        <!-- Login Form -->
+        <div class="w-full max-w-md  p-4">
+           
+            
+            <form class="space-y-6">
+                <!-- Email Field -->
+                <div class="space-y-2">
+                    <!-- <label class="text-sm font-medium text-white">Email Address</label> -->
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-envelope text-gray-400"></i>
+                        </div>
+                        <input 
+                            type="email" 
+                            placeholder="Enter your email" 
+                            class="w-full pl-10 pr-4 py-3 bg-white bg-opacity-90 rounded-lg text-gray-800 input-field focus:outline-none focus:ring-2 focus:ring-medblue"
+                            
+                        >
+                    </div>
+                </div>
+                
+                <!-- Password Field -->
+                <div class="space-y-2">
+                    <!-- <div class="flex justify-between items-center">
+                        <label class="text-sm font-medium text-white">Password</label>
+                        
+                    </div> -->
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-400"></i>
+                        </div>
+                        <input 
+                            type="password" 
+                            placeholder="Enter your password" 
+                            class="w-full pl-10 pr-4 py-3 bg-white bg-opacity-90 rounded-lg text-gray-800 input-field focus:outline-none focus:ring-2 focus:ring-medblue"
+                           
+                        >
+                    </div>
+                </div>
+                
+                <!-- Remember Me Checkbox -->
+                <div class="flex items-center">
+                    <input 
+                        type="checkbox" 
+                        id="remember"
+                        class="h-4 w-4 text-medblue focus:ring-medblue border-gray-300 rounded"
+                    >
+                    <label for="remember" class="ml-2 block text-sm text-white">Remember me</label>
+                </div>
+                
+                <!-- Login button -->
+                <button class="w-full bg-medblue hover:bg-medlightblue text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center">
+                    <span>LOGIN</span>
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </form>
+            
+           
+        </div>
+        
+        <!-- Bottom text -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+            <p class="text-white text-sm opacity-75">Protected by enterprise-grade security</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedSchool Portal - Student Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        medblue: '#1E40AF',
+                        medlightblue: '#3B82F6',
+                        meddarkblue: '#1E3A8A',
+                        medgreen: '#10B981',
+                        medred: '#EF4444',
+                        medpurple: '#8B5CF6',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- Top Navigation -->
+    <nav class="bg-white shadow-md fixed top-0 w-full z-50 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center ">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <img src="images/Screenshot_2025-08-21_112549-removebg-preview.png" alt="UniHealth Logo" class="h-10 w-auto mr-2" id="logo">
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div class="ml-2 flex items-center md:ml-3 space-x-2" id="user-info">
+                        
+                        <a href="Messages.html" class="relative bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none">
+                            <i class="fas fa-bell h-8 w-8 text-lg"></i>
+                            <span class="absolute top-1 right-1 inline-block w-2 h-2 bg-medred rounded-full"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-20 py-6 mb-20" >
+        <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Header -->
+          
+            <!-- Profile Content -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Left Column - Profile Card -->
+              
+
+                <!-- Right Column - Details -->
+                <div class="lg:col-span-2">
+                    <!-- Basic Information -->
+                    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
+                        <div class="px-4 py-5 sm:px-6 bg-gray-50">
+                            <div class="flex flex-row items-center p-4">
+                                <div class="relative mb-4 mr-4">
+                                    <img class="h-24 w-24 rounded-full object-cover" src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="Profile picture">
+                                    <label for="profile-upload" class="absolute bottom-0 right-0 bg-medlightblue text-white p-1 rounded-full cursor-pointer">
+                                        <i class="fas fa-camera text-xs"></i>
+                                        <input type="file" id="profile-upload" class="hidden" accept="image/*">
+                                    </label>
+                                </div>
+                                <h2 class="text-xl font-bold text-gray-900">Sipho Masango</h2>
+                              
+                            </div>
+                        </div>
+                        <div class="border-t border-gray-200">
+                            <dl>
+                               
+                                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-gray-500">Student number</dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">221136255</dd>
+                                </div>
+                                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-gray-500">Email address</dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">221136255@tut4life.ac.za</dd>
+                                </div>
+                                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-gray-500">Phone number</dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">+27 82 123 4567</dd>
+                                </div>
+                                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <dt class="text-sm font-medium text-gray-500">Campus</dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">Pretoria Campus</dd>
+                                </div>
+                            </dl>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+      <!-- Bottom Navigation (Mobile Only) -->
+      <nav class="bottom-nav fixed bottom-0 w-full bg-white border-t border-gray-200 z-40 md:hidden">
+        <div class="grid grid-cols-4 gap-1 py-2">
+            <a href="index.html" class="flex flex-col items-center justify-center p-2 text-gray-500 hover:text-medblue">
+                <i class="fas fa-home text-lg"></i>
+                <span class="text-xs mt-1">Home</span>
+            </a>
+            <a href="Appointments.html" class="flex flex-col items-center justify-center p-2 text-gray-500 hover:text-medblue">
+                <i class="fas fa-calendar-check text-lg"></i>
+                <span class="text-xs mt-1">Appointments</span>
+            </a>
+            <a href="MedicalRecoard.html" class="flex flex-col items-center justify-center p-2 text-gray-500 hover:text-medblue">
+                <i class="fas fa-file-medical text-lg"></i>
+                <span class="text-xs mt-1">Records</span>
+            </a>
+            <a href="Profile.html" class="flex flex-col items-center justify-center p-2 text-medblue">
+                <i class="fas fa-user text-lg"></i>
+                <span class="text-xs mt-1">Profile</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        // Handle profile picture upload
+        document.getElementById('profile-upload').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.querySelector('img[alt="Profile picture"]').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+</html>
