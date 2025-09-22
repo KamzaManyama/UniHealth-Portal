@@ -1,0 +1,142 @@
+-- ==========================================
+-- TUT Clinics Management System Database
+-- ==========================================
+
+DROP DATABASE IF EXISTS tut_clinics;
+CREATE DATABASE tut_clinics;
+USE tut_clinics;
+
+-- ======================
+-- Students Table
+-- Info comes from University API
+-- ======================
+CREATE TABLE students (
+    student_number VARCHAR(20) PRIMARY KEY,
+    full_name VARCHAR(150) NOT NULL,
+    email VARCHAR(150) UNIQUE NOT NULL,
+    phone VARCHAR(20),
+    campus_id INT NOT NULL,
+    profile_image VARCHAR(255) DEFAULT 'default.png',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ======================
+-- Campuses Table
+-- ======================
+CREATE TABLE campuses (
+    campus_id INT AUTO_INCREMENT PRIMARY KEY,
+    campus_name VARCHAR(150) NOT NULL,
+    province VARCHAR(100) NOT NULL,
+    address VARCHAR(255),
+    contact_number VARCHAR(20)
+);
+
+-- ======================
+-- Staff Table (Nurses, Doctors, Counselors, Admins)
+-- ======================
+CREATE TABLE staff (
+    staff_id INT AUTO_INCREMENT PRIMARY KEY,
+    full_name VARCHAR(150) NOT NULL,
+    role ENUM('Nurse','Doctor','Counselor','Admin') NOT NULL,
+    specialization VARCHAR(100),
+    email VARCHAR(150) UNIQUE NOT NULL,
+    phone VARCHAR(20),
+    campus_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (campus_id) REFERENCES campuses(campus_id)
+);
+
+-- ======================
+-- Users Table (Authentication)
+-- Stores login credentials (for both staff & students)
+-- ======================
+CREATE TABLE users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(150) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    role ENUM('Student','Staff','Admin') NOT NULL,
+    student_number VARCHAR(20),
+    staff_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_number) REFERENCES students(student_number),
+    FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
+);
+
+-- ======================
+-- Appointments Table
+-- ======================
+CREATE TABLE appointments (
+    appointment_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_number VARCHAR(20) NOT NULL,
+    staff_id INT NOT NULL,
+    campus_id INT NOT NULL,
+    appointment_type ENUM('Medical','Mental Health','General Checkup','Other') NOT NULL,
+    reason TEXT,
+    appointment_date DATETIME NOT NULL,
+    duration_minutes INT DEFAULT 30,
+    status ENUM('Pending','Confirmed','Completed','Cancelled') DEFAULT 'Pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_number) REFERENCES students(student_number),
+    FOREIGN KEY (staff_id) REFERENCES staff(staff_id),
+    FOREIGN KEY (campus_id) REFERENCES campuses(campus_id)
+);
+
+-- ======================
+-- Referrals Table
+-- ======================
+CREATE TABLE referrals (
+    referral_id INT AUTO_INCREMENT PRIMARY KEY,
+    appointment_id INT NOT NULL,
+    from_staff_id INT NOT NULL,
+    to_staff_id INT,
+    to_campus_id INT,
+    external_clinic VARCHAR(255),
+    notes TEXT,
+    status ENUM('Pending','Approved','Completed','Rejected') DEFAULT 'Pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (appointment_id) REFERENCES appointments(appointment_id),
+    FOREIGN KEY (from_staff_id) REFERENCES staff(staff_id),
+    FOREIGN KEY (to_staff_id) REFERENCES staff(staff_id),
+    FOREIGN KEY (to_campus_id) REFERENCES campuses(campus_id)
+);
+
+-- ======================
+-- Clinic Visits Table (History & Records)
+-- ======================
+CREATE TABLE clinic_visits (
+    visit_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_number VARCHAR(20) NOT NULL,
+    staff_id INT NOT NULL,
+    visit_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    notes TEXT,
+    diagnosis TEXT,
+    treatment TEXT,
+    FOREIGN KEY (student_number) REFERENCES students(student_number),
+    FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
+);
+
+-- ======================
+-- Awareness Messages Table (Campaigns & Daily Messages)
+-- ======================
+CREATE TABLE awareness_messages (
+    message_id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(150) NOT NULL,
+    message TEXT NOT NULL,
+    audience ENUM('All','Students','Staff') DEFAULT 'All',
+    created_by INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (created_by) REFERENCES staff(staff_id)
+);
+
+-- ======================
+-- Emergency Contacts Table
+-- ======================
+CREATE TABLE emergency_contacts (
+    contact_id INT AUTO_INCREMENT PRIMARY KEY,
+    campus_id INT NOT NULL,
+    name VARCHAR(150) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    type ENUM('Campus Security','Ambulance','Fire','Police','Other') NOT NULL,
+    FOREIGN KEY (campus_id) REFERENCES campuses(campus_id)
+);
+
