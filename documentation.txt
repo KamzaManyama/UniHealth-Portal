@@ -1,0 +1,297 @@
+TUT Clinics — Application Proposal & Project Documentation
+
+Deliverable: Full proposal describing the problem, solution, stakeholder value, features, architecture, compliance, risks, costs (high-level), and documentation required for delivery.
+
+Executive summary
+
+TUT Clinics is a secure, campus-aware digital health platform that connects Tshwane University of Technology students with clinic services across TUT campuses. It reduces queues, improves care continuity (appointments, medical notes, referrals), and provides an education/awareness channel. The system integrates with the university’s student API (using the student number as the canonical identifier), supports role-based workflows (Student, Nurse/Staff, Admin), and enforces referral rules (Gauteng-only inter-campus referrals; intra-campus allowed). The result: faster access to care, better clinic resource utilisation, and measurable health outcomes.
+
+Problem statement
+
+High student volumes at TUT campuses create long physical queues and inconsistent access to clinic resources.
+
+Paper-based or fragmented processes lead to lost records, poor follow-up, and administrative overhead.
+
+Limited visibility of campaign uptake and resource utilisation (vaccines, test kits, counselling slots).
+
+Students lack a single, private place to see appointments, referrals and clinic notices.
+
+Clinics need a way to prioritise urgent cases and manage capacity across many campuses.
+
+Proposed solution
+
+A secure web-and-mobile-ready platform that:
+
+Uses the university API for student identity (student number) and preselects campus.
+
+Lets students book campus-aware appointment slots and view medical visit history.
+
+Lets nurses/staff manage schedules, record visit notes, and create referrals (subject to province rules).
+
+Lets admins create awareness campaigns and manage resources & reporting.
+
+Provides audit logging, role-based permissions, and encryption to meet privacy/health data requirements.
+
+Who benefits & why stakeholders should invest
+
+Students
+
+Faster booking, fewer queues, reminders, continuity across campuses in Gauteng, easy access to records and awareness resources.
+
+Clinical staff & campus management
+
+Predictable schedules, better patient triage, digital records, easier referrals, reduced administrative load.
+
+University leadership
+
+Better utilization of campus health resources, data for planning (peak hours, campaign impact), improved student wellbeing => better student success metrics.
+
+Funders / Investors
+
+High social impact (student health & retention), scalable across campuses and universities, potential to integrate into student services (monetisation via premium reporting or integrations optional).
+
+Why invest
+
+Addresses an operational pain point (high student clinic demand) with clear KPIs (reduced in-person queue times, more completed appointments, campaign coverage).
+
+Reuses university identity APIs — de-risks adoption and speeds onboarding.
+
+Modular/replicable across institutions (scalable product).
+
+Key features (by role)
+Student
+
+Secure login (university-backed; email + password with university API verification).
+
+Dashboard: upcoming appointments, messages/awareness, campus contact & emergency numbers.
+
+Appointment booking/reschedule/cancel with validated time slots and capacity checks.
+
+View medical visit history & referral status (read-only for official fields; profile picture editable).
+
+Campus switch (see other Gauteng campuses’ availability).
+
+Notifications (in-app + optional SMS/email).
+
+Nurse / Staff
+
+Daily schedule view; confirm/complete appointments.
+
+Create/update clinical notes, prescriptions (text), and clinic visit records.
+
+Create referrals (intra-campus, inter-campus within Gauteng); track status.
+
+View students’ visit history (for those visiting their campus).
+
+Receive alerts for urgent cases.
+
+Admin
+
+Manage campuses, staff assignments, clinic capacity (slots/day), campaigns.
+
+Create awareness messages & special event slots (reserve X% of slots).
+
+Reports & dashboards: appointments by day, referral counts by campus, campaign uptake, staff utilisation.
+
+Manage permissions and policy (e.g., referral province rules).
+
+Minimum Viable Product (MVP) scope
+
+Student login + campus auto-selection via university API.
+
+Booking flow (view slots, create, cancel).
+
+Staff schedule & appointment confirmation.
+
+Clinic visit record creation.
+
+Referral creation and simple approval workflow (Gauteng-only inter-campus).
+
+Awareness messages visible on student dashboard.
+
+Basic admin dashboard for clinics and reports.
+
+MySQL database and REST API endpoints.
+
+Technical architecture (high level)
+
+Frontend: React (web) with responsive design (mobile-first). Future upgrade path to React Native for mobile app re-use.
+
+Backend: Node.js + Express (or Django REST Framework) exposing RESTful API endpoints.
+
+Database: MySQL (normalized schema—students referenced by student_number).
+
+Auth & Identity: University API for student verification; issue local JWT after verification for session management. Staff accounts managed locally with secure password hashing and MFA option.
+
+Notifications: Email (SMTP) and SMS via third-party provider (configurable).
+
+Hosting: Cloud (AWS/Azure/GCP) or University datacenter. Use managed DB and load balancer.
+
+Monitoring: Logging + alerts (application logs, errors, performance).
+
+Backups & DR: Daily DB backups, point-in-time recovery; retention policy.
+
+Data model highlights
+
+students(student_number PK, full_name, email, campus_id, profile_image, ...)
+
+campuses(campus_id, campus_name, province, address, contact_number)
+
+staff(staff_id, full_name, role, specialization, campus_id, ...)
+
+appointments(appointment_id, student_number, staff_id, campus_id, appointment_date, duration_minutes, status, ...)
+
+referrals(referral_id, appointment_id, from_staff_id, to_staff_id, to_campus_id, status, ...)
+
+clinic_visits(visit_id, student_number, staff_id, visit_date, notes, diagnosis, treatment)
+
+awareness_messages(message_id, title, message, audience, created_by, created_at)
+
+audit_logs(log_id, user_id, action, details, created_at)
+
+(Complete SQL schema provided in previous messages will be included in project docs.)
+
+Security, privacy & compliance
+
+Legal: South Africa — follow POPIA (Protection of Personal Information Act) for personal data and treat clinical notes as sensitive data. App must also follow sector best-practices for health data.
+
+Encryption: TLS for all transport; AES-256 at rest for sensitive fields.
+
+Access controls: Role-based access control (RBAC) and least-privilege principles. Nurses see only patients visiting their campus; admins have oversight.
+
+Audit logging: All read/write access to medical info logged with user id & timestamp.
+
+Data minimisation: Store minimal student info locally; authoritative data pulled (and periodically synced) from the university API.
+
+Backups & retention: Define retention policies for medical records as per university/health policy.
+
+Incident response: Defined plan for data breaches and notifications.
+
+Referral rules & policy enforcement
+
+System enforces referral policy: only inter-campus referrals within Gauteng allowed. Intra-campus referrals allowed everywhere. Attempts to create cross-province referrals will be blocked with a clear message and suggested local campus alternatives.
+
+Operations & support
+
+User support: Embedded help center and email support; escalation path for clinical emergencies (phone numbers).
+
+Training: Short training pack for nurses and admins (user guides + recorded walk-through).
+
+Maintenance: Application and DB patching, monitoring, security reviews, quarterly audits.
+
+Risk analysis & mitigations
+
+Risk: Data privacy breach. → Mitigation: strong encryption, strict RBAC, and audits.
+
+Risk: University API unavailability. → Mitigation: local read-only cache, retries and operational alerts to university IT.
+
+Risk: Overbooking or capacity misuse. → Mitigation: enforce capacity slots, per-student booking limits, admin controls for campaign reservations.
+
+Risk: Low adoption. → Mitigation: awareness campaigns, incentive pilots (reduced queue times, priority slots), integrate with campus comms.
+
+High-level cost buckets (for planning / funding justification)
+
+Design & UX — UI/UX for web + mobile-ready screens, accessibility testing.
+
+Backend & API — API development, integration to university API, business rules (referrals, campaigns).
+
+Frontend — React web app + future React Native code-sharing plan.
+
+DevOps & Hosting — Cloud hosting, DB, SSL, backups, monitoring.
+
+Security & Compliance — Penetration test, legal review for POPIA compliance.
+
+Support & Training — Training sessions, user docs, first-line support.
+
+Contingency — unexpected integration complexity.
+
+Note: I have not included exact currency numbers — you likely want local procurement quotes or developer rate estimates. I can produce a detailed cost estimate if you provide preferred staffing model (internal team vs contractor) and hosting preferences.
+
+Key performance indicators (KPIs)
+
+% of appointments booked online vs walk-in.
+
+Average time from booking to appointment completion.
+
+No-show rate (and reduction over time).
+
+Number of referrals processed (Gauteng) and average processing time.
+
+Campaign engagement (students viewing/booking campaign slots).
+
+System uptime and API availability.
+
+Deliverables & documentation (what you will get)
+
+Functional Requirements Document (FRD) — user stories, flows, acceptance criteria.
+
+Technical Design Document (TDD) — architecture diagrams, APIs, deployment topology.
+
+Database schema & ERD — full SQL file (ready to run), normalization notes.
+
+API specification — endpoints, request/response formats, auth methods (OpenAPI/Swagger).
+
+UI designs & prototypes — desktop + mobile responsive screens (Figma or static assets).
+
+Test plan & test cases — unit, integration, E2E, security.
+
+User guides — for Students, Staff, Admins.
+
+Operations manual — deployment, backups, rollback, incident response.
+
+SLA & support plan — definitions for uptime, response times, escalation.
+
+Pilot report template — KPIs and rollout guidance for pilot campuses.
+
+Example API endpoints (summary)
+
+POST /auth/login — authenticate via university API + issue JWT.
+
+GET /students/{student_number} — fetch student profile (from local cache or uni API).
+
+GET /appointments?student_number=... — list appointments.
+
+POST /appointments — create appointment (validate capacity).
+
+PUT /appointments/{id} — update / reschedule / cancel.
+
+POST /referrals — create referral (backend enforces province rules).
+
+GET /awareness — list active messages for campus.
+
+GET /staff/{id}/schedule — staff view appointments.
+(Full OpenAPI spec included in delivered docs.)
+
+Phased rollout (recommended approach — no time estimates included)
+
+Phase 1 (Pilot-ready): Authentication + student dashboard + booking + staff schedule + campus messages. Pilot at 1–2 campuses.
+
+Phase 2: Referrals (Gauteng inter-campus), medical records, admin reporting.
+
+Phase 3: Full roll-out across all campuses, additional integrations (SMS provider, analytics), mobile app.
+
+Phase 4: Optimization, multi-university repeatable product, advanced reporting.
+
+What will make stakeholders invest
+
+Clear ROI & impact metrics: show expected reductions in queue times and measurable increase in campaign uptake.
+
+Low integration risk: use existing university APIs for identity, minimizing duplicate student data.
+
+Compliance and safety: POPIA-aware design with auditability and encryption.
+
+Pilot success story: a short pilot demonstrating adoption and outcomes, with direct testimonials from students and clinic staff.
+
+Scalability: architecture designed to scale across campuses and universities — potential for a platform product.
+
+Next steps I can prepare for you (pick any)
+
+Complete OpenAPI (Swagger) spec for all endpoints.
+
+Full deployment-ready SQL (I already provided combined schema; can add sample seed data / migration scripts).
+
+FRD with prioritized user stories for the MVP.
+
+Pitch deck for stakeholders/investors highlighting costs, benefits, and pilot plan.
+
+Detailed cost estimate for development, hosting and first-year support (requires preferred staffing/hosting info).
