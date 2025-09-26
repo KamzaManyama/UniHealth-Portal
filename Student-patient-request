@@ -1,0 +1,116 @@
+===========================================================
+medical record
+===========================================================
+
+SELECT 
+    a.appointment_id,
+    a.appointment_date,
+    a.duration_minutes,
+    a.appointment_type,
+    a.reason AS purpose,
+    CONCAT(s.full_name, ', ', st.role) AS doctor_info,
+    cv.diagnosis,
+    hn.note_text AS health_note,
+    
+    -- Prescriptions
+    p.prescription_id,
+    p.drug_name,
+    p.dosage,
+    p.instructions,
+    p.issued_at
+
+FROM appointments a
+INNER JOIN students st ON a.student_number = st.student_number
+INNER JOIN staff s ON a.staff_id = s.staff_id
+LEFT JOIN clinic_visits cv ON a.appointment_id = cv.visit_id
+LEFT JOIN health_notes hn ON a.appointment_id = hn.appointment_id
+LEFT JOIN prescriptions p ON a.appointment_id = p.appointment_id
+WHERE a.student_number = 'STUDENT_NUMBER_HERE'
+ORDER BY a.appointment_date DESC, p.prescription_id ASC;
+
+===========================================================
+UPcoming Appointmets 
+===========================================================
+
+SELECT 
+    a.appointment_id,
+    a.appointment_type,
+    a.appointment_date,
+    c.campus_name,
+    c.address AS location,
+    s.full_name AS staff_name,
+    s.role AS staff_role
+FROM appointments a
+INNER JOIN students st ON a.student_number = st.student_number
+INNER JOIN staff s ON a.staff_id = s.staff_id
+INNER JOIN campuses c ON a.campus_id = c.campus_id
+WHERE a.student_number = 'STUDENT_NUMBER_HERE'
+  AND a.appointment_date > NOW()
+ORDER BY a.appointment_date ASC;
+
+===========================================================
+Appointments * Table aupdate and cancel
+===========================================================
+
+SELECT 
+    a.appointment_id,
+    a.appointment_type,
+    a.appointment_date,
+    a.duration_minutes,
+    a.reason AS purpose,
+    c.campus_name,
+    c.address AS location,
+    s.full_name AS staff_name,
+    s.role AS staff_role,
+    a.status
+FROM appointments a
+INNER JOIN students st ON a.student_number = st.student_number
+INNER JOIN staff s ON a.staff_id = s.staff_id
+INNER JOIN campuses c ON a.campus_id = c.campus_id
+WHERE a.student_number = 'STUDENT_NUMBER_HERE'
+  AND a.appointment_date > NOW()
+ORDER BY a.appointment_date ASC;
+
+===========================================================
+ aupdate appointments
+===========================================================
+
+UPDATE appointments
+SET appointment_date = '2023-10-20 14:00:00',
+    duration_minutes = 45,
+    status = 'Pending'
+WHERE appointment_id = 123;  -- Replace with the appointment ID
+
+===========================================================
+delete appointments
+===========================================================
+
+UPDATE appointments
+SET status = 'Cancelled'
+WHERE appointment_id = 123;  -- Replace with the appointment ID
+
+===========================================================
+Book an appointment
+===========================================================
+INSERT INTO appointments (
+    student_number,
+    staff_id,
+    campus_id,
+    appointment_type,
+    reason,
+    appointment_date,
+    duration_minutes,
+    status,
+    created_at
+) VALUES (
+    'STUDENT_NUMBER_HERE',   
+    5,                      
+    2,                     
+    'General Checkup',       
+    'Routine health check-up', 
+    '2025-10-18 14:30:00',   
+    30,                     
+    'Pending',             
+    NOW()
+);
+
