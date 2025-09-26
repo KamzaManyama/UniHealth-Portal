@@ -1,22 +1,21 @@
 -- ==========================================
--- TUT Clinics Management System Database
+-- UniHealth Clinics Management System
 -- ==========================================
 
-DROP DATABASE IF EXISTS tut_clinics;
-CREATE DATABASE tut_clinics;
-USE tut_clinics;
+DROP DATABASE IF EXISTS unihealth;
+CREATE DATABASE unihealth;
+USE unihealth;
 
 -- ======================
--- Students Table
--- Info comes from University API
+-- Universities Table
 -- ======================
-CREATE TABLE students (
-    student_number VARCHAR(20) PRIMARY KEY,
-    full_name VARCHAR(150) NOT NULL,
-    email VARCHAR(150) UNIQUE NOT NULL,
-    phone VARCHAR(20),
-    campus_id INT NOT NULL,
-    profile_image VARCHAR(255) DEFAULT 'default.png',
+CREATE TABLE universities (
+    university_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(150) NOT NULL,
+    abbreviation VARCHAR(50) UNIQUE NOT NULL,
+    province VARCHAR(100) NOT NULL,
+    contact_email VARCHAR(150),
+    contact_phone VARCHAR(20),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -25,39 +24,66 @@ CREATE TABLE students (
 -- ======================
 CREATE TABLE campuses (
     campus_id INT AUTO_INCREMENT PRIMARY KEY,
+    university_id INT NOT NULL,
     campus_name VARCHAR(150) NOT NULL,
     province VARCHAR(100) NOT NULL,
     address VARCHAR(255),
-    contact_number VARCHAR(20)
+    contact_number VARCHAR(20),
+    FOREIGN KEY (university_id) REFERENCES universities(university_id)
 );
 
 -- ======================
--- Staff Table (Nurses, Doctors, Counselors, Admins)
+-- Students Table
+-- Synced from University API
+-- ======================
+CREATE TABLE students (
+    student_number VARCHAR(20) PRIMARY KEY,
+    university_id INT NOT NULL,
+    full_name VARCHAR(150) NOT NULL,
+    email VARCHAR(150) UNIQUE NOT NULL,
+    phone VARCHAR(20),
+    campus_id INT NOT NULL,
+    profile_image VARCHAR(255) DEFAULT 'default.png',
+    is_active BOOLEAN DEFAULT TRUE,
+    synced_at TIMESTAMP NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (university_id) REFERENCES universities(university_id),
+    FOREIGN KEY (campus_id) REFERENCES campuses(campus_id)
+);
+
+-- ======================
+-- Staff Table
 -- ======================
 CREATE TABLE staff (
     staff_id INT AUTO_INCREMENT PRIMARY KEY,
+    university_id INT NOT NULL,
     full_name VARCHAR(150) NOT NULL,
     role ENUM('Nurse','Doctor','Counselor','Admin') NOT NULL,
     specialization VARCHAR(100),
     email VARCHAR(150) UNIQUE NOT NULL,
     phone VARCHAR(20),
     campus_id INT NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    synced_at TIMESTAMP NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (university_id) REFERENCES universities(university_id),
     FOREIGN KEY (campus_id) REFERENCES campuses(campus_id)
 );
 
 -- ======================
 -- Users Table (Authentication)
--- Stores login credentials (for both staff & students)
 -- ======================
 CREATE TABLE users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
+    university_id INT NOT NULL,
     email VARCHAR(150) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     role ENUM('Student','Staff','Admin') NOT NULL,
+    system_role ENUM('Medic','Patient','Admin') NOT NULL DEFAULT 'Patient',
     student_number VARCHAR(20),
     staff_id INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (university_id) REFERENCES universities(university_id),
     FOREIGN KEY (student_number) REFERENCES students(student_number),
     FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
 );
@@ -67,6 +93,7 @@ CREATE TABLE users (
 -- ======================
 CREATE TABLE appointments (
     appointment_id INT AUTO_INCREMENT PRIMARY KEY,
+    university_id INT NOT NULL,
     student_number VARCHAR(20) NOT NULL,
     staff_id INT NOT NULL,
     campus_id INT NOT NULL,
@@ -76,6 +103,7 @@ CREATE TABLE appointments (
     duration_minutes INT DEFAULT 30,
     status ENUM('Pending','Confirmed','Completed','Cancelled') DEFAULT 'Pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (university_id) REFERENCES universities(university_id),
     FOREIGN KEY (student_number) REFERENCES students(student_number),
     FOREIGN KEY (staff_id) REFERENCES staff(staff_id),
     FOREIGN KEY (campus_id) REFERENCES campuses(campus_id)
@@ -101,42 +129,64 @@ CREATE TABLE referrals (
 );
 
 -- ======================
--- Clinic Visits Table (History & Records)
+-- Clinic Visits Table
 -- ======================
 CREATE TABLE clinic_visits (
     visit_id INT AUTO_INCREMENT PRIMARY KEY,
+    university_id INT NOT NULL,
     student_number VARCHAR(20) NOT NULL,
     staff_id INT NOT NULL,
     visit_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     notes TEXT,
     diagnosis TEXT,
     treatment TEXT,
+    FOREIGN KEY (university_id) REFERENCES universities(university_id),
     FOREIGN KEY (student_number) REFERENCES students(student_number),
     FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
 );
 
 -- ======================
--- Awareness Messages Table (Campaigns & Daily Messages)
+-- Awareness Messages Table
 -- ======================
 CREATE TABLE awareness_messages (
     message_id INT AUTO_INCREMENT PRIMARY KEY,
+    university_id INT NOT NULL,
     title VARCHAR(150) NOT NULL,
     message TEXT NOT NULL,
     audience ENUM('All','Students','Staff') DEFAULT 'All',
     created_by INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (university_id) REFERENCES universities(university_id),
     FOREIGN KEY (created_by) REFERENCES staff(staff_id)
 );
 
 -- ======================
--- Emergency Contacts Table
+-- Emergency Ambulance Requests Table
 -- ======================
-CREATE TABLE emergency_contacts (
-    contact_id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE ambulance_requests (
+    request_id INT AUTO_INCREMENT PRIMARY KEY,
+    university_id INT NOT NULL,
     campus_id INT NOT NULL,
-    name VARCHAR(150) NOT NULL,
-    phone VARCHAR(20) NOT NULL,
-    type ENUM('Campus Security','Ambulance','Fire','Police','Other') NOT NULL,
-    FOREIGN KEY (campus_id) REFERENCES campuses(campus_id)
+    student_number VARCHAR(20) NOT NULL,
+    status ENUM('Pending','Dispatched','Completed','Cancelled') DEFAULT 'Pending',
+    requested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (university_id) REFERENCES universities(university_id),
+    FOREIGN KEY (campus_id) REFERENCES campuses(campus_id),
+    FOREIGN KEY (student_number) REFERENCES students(student_number)
 );
 
+-- ======================
+-- Messaging / Notifications
+-- ======================
+CREATE TABLE messages (
+    message_id INT AUTO_INCREMENT PRIMARY KEY,
+    university_id INT NOT NULL,
+    sender_id INT NOT NULL,
+    receiver_id INT NOT NULL,
+    content TEXT NOT NULL,
+    is_read BOOLEAN DEFAULT FALSE,
+    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (university_id) REFERENCES universities(university_id),
+    FOREIGN KEY (sender_id) REFERENCES users(user_id),
+    FOREIGN KEY (receiver_id) REFERENCES users(user_id)
+);
