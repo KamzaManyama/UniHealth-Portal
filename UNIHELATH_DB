@@ -1,14 +1,15 @@
--- ==========================================
+-- ===============================================================================================================
 -- UniHealth Clinics Management System
--- ==========================================
+-- ===============================================================================================================
 
 DROP DATABASE IF EXISTS unihealth;
 CREATE DATABASE unihealth;
 USE unihealth;
 
--- ======================
+-- ===============================================================================================================
 -- Universities Table
--- ======================
+-- ===============================================================================================================
+
 CREATE TABLE universities (
     university_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(150) NOT NULL,
@@ -19,9 +20,10 @@ CREATE TABLE universities (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- ======================
+-- ===============================================================================================================
 -- Campuses Table
--- ======================
+-- ===============================================================================================================
+
 CREATE TABLE campuses (
     campus_id INT AUTO_INCREMENT PRIMARY KEY,
     university_id INT NOT NULL,
@@ -32,10 +34,10 @@ CREATE TABLE campuses (
     FOREIGN KEY (university_id) REFERENCES universities(university_id)
 );
 
--- ======================
+-- ===============================================================================================================
 -- Students Table
--- Synced from University API
--- ======================
+-- ===============================================================================================================
+
 CREATE TABLE students (
     student_number VARCHAR(20) PRIMARY KEY,
     university_id INT NOT NULL,
@@ -51,9 +53,10 @@ CREATE TABLE students (
     FOREIGN KEY (campus_id) REFERENCES campuses(campus_id)
 );
 
--- ======================
+-- ===============================================================================================================
 -- Staff Table
--- ======================
+-- ===============================================================================================================
+
 CREATE TABLE staff (
     staff_id INT AUTO_INCREMENT PRIMARY KEY,
     university_id INT NOT NULL,
@@ -70,16 +73,17 @@ CREATE TABLE staff (
     FOREIGN KEY (campus_id) REFERENCES campuses(campus_id)
 );
 
--- ======================
+-- ===============================================================================================================
 -- Users Table (Authentication)
--- ======================
+-- ===============================================================================================================
+
 CREATE TABLE users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     university_id INT NOT NULL,
     email VARCHAR(150) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     role ENUM('Student','Staff','Admin') NOT NULL,
-    system_role ENUM('Medic','Patient','Admin') NOT NULL DEFAULT 'Patient',
+    system_role ENUM('Patient','Admin','Nurse') NOT NULL DEFAULT 'Patient',
     student_number VARCHAR(20),
     staff_id INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -88,9 +92,10 @@ CREATE TABLE users (
     FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
 );
 
--- ======================
+-- ===============================================================================================================
 -- Appointments Table
--- ======================
+-- ===============================================================================================================
+
 CREATE TABLE appointments (
     appointment_id INT AUTO_INCREMENT PRIMARY KEY,
     university_id INT NOT NULL,
@@ -109,9 +114,10 @@ CREATE TABLE appointments (
     FOREIGN KEY (campus_id) REFERENCES campuses(campus_id)
 );
 
--- ======================
+-- ===============================================================================================================
 -- Referrals Table
--- ======================
+-- ===============================================================================================================
+
 CREATE TABLE referrals (
     referral_id INT AUTO_INCREMENT PRIMARY KEY,
     appointment_id INT NOT NULL,
@@ -128,9 +134,10 @@ CREATE TABLE referrals (
     FOREIGN KEY (to_campus_id) REFERENCES campuses(campus_id)
 );
 
--- ======================
+-- ===============================================================================================================
 -- Clinic Visits Table
--- ======================
+-- ===============================================================================================================
+
 CREATE TABLE clinic_visits (
     visit_id INT AUTO_INCREMENT PRIMARY KEY,
     university_id INT NOT NULL,
@@ -145,9 +152,10 @@ CREATE TABLE clinic_visits (
     FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
 );
 
--- ======================
+-- ===============================================================================================================
 -- Awareness Messages Table
--- ======================
+-- ===============================================================================================================
+
 CREATE TABLE awareness_messages (
     message_id INT AUTO_INCREMENT PRIMARY KEY,
     university_id INT NOT NULL,
@@ -160,9 +168,10 @@ CREATE TABLE awareness_messages (
     FOREIGN KEY (created_by) REFERENCES staff(staff_id)
 );
 
--- ======================
+-- ===============================================================================================================
 -- Emergency Ambulance Requests Table
--- ======================
+-- ===============================================================================================================
+
 CREATE TABLE ambulance_requests (
     request_id INT AUTO_INCREMENT PRIMARY KEY,
     university_id INT NOT NULL,
@@ -175,32 +184,34 @@ CREATE TABLE ambulance_requests (
     FOREIGN KEY (student_number) REFERENCES students(student_number)
 );
 
--- ======================
+-- ===============================================================================================================
 -- Messaging / Notifications
--- ======================
-CREATE TABLE messages (
-    message_id INT AUTO_INCREMENT PRIMARY KEY,
-    university_id INT NOT NULL,
-    sender_id INT NOT NULL,
-    receiver_id INT NOT NULL,
-    content TEXT NOT NULL,
+-- ===============================================================================================================
+
+CREATE TABLE notifications (
+    notification_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    title VARCHAR(200) NOT NULL,
+    message TEXT NOT NULL,
+    type ENUM('Appointment','Reminder','Emergency','General') NOT NULL,
     is_read BOOLEAN DEFAULT FALSE,
-    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (university_id) REFERENCES universities(university_id),
-    FOREIGN KEY (sender_id) REFERENCES users(user_id),
-    FOREIGN KEY (receiver_id) REFERENCES users(user_id)
+    action_url VARCHAR(255),
+    scheduled_at DATETIME,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
 
--- ========================
--- managing wlakins
--- ===========================
+-- ===============================================================================================================
+-- managing walkins
+-- ===============================================================================================================
+
 CREATE TABLE walkins (
     walkin_id INT AUTO_INCREMENT PRIMARY KEY,
     student_number VARCHAR(20) NOT NULL,
     campus_id INT NOT NULL,
     nurse_id INT NOT NULL,
-    service_type ENUM('General Consultation', 'Dental', 'Mental Health', 'Sexual Health', 'Follow-up', 'Vaccination', 'Allergy Testing', 'Physical Examination') NOT NULL,
+    service_type ENUM('General Consultation','Preventive Care','Reproductive & Sexual Health','Women’s Health','Men’s Health','Health Education & Awareness','Pharmacy Services','Special Programs','Dental','Mental Health','Follow-up','Vaccination','Allergy Testing','Physical Examination') NOT NULL;
     reason TEXT,
     urgency ENUM('Routine', 'Urgent', 'Emergency') DEFAULT 'Routine',
     status ENUM('Pending', 'In Progress', 'Completed', 'Cancelled') DEFAULT 'Pending',
@@ -210,9 +221,10 @@ CREATE TABLE walkins (
     FOREIGN KEY (nurse_id) REFERENCES staff(staff_id)
 );
 
--- ============================
+-- ===============================================================================================================
 -- recurring appointmebts
--- ==============================
+-- ===============================================================================================================
+
 CREATE TABLE service_recurring_appointments (
     recurring_id INT AUTO_INCREMENT PRIMARY KEY,
     student_number VARCHAR(20) NOT NULL,
@@ -226,11 +238,130 @@ CREATE TABLE service_recurring_appointments (
         'Other'
     ) NOT NULL,
     reason TEXT,
-    recurrence_interval_days INT NOT NULL, -- e.g., 30 for monthly
+    recurrence_interval_days INT NOT NULL,
     next_appointment DATE NOT NULL,
     status ENUM('Active','Paused','Cancelled') DEFAULT 'Active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (student_number) REFERENCES students(student_number),
     FOREIGN KEY (campus_id) REFERENCES campuses(campus_id),
     FOREIGN KEY (nurse_id) REFERENCES staff(staff_id)
+);
+
+-- ===============================================================================================================
+-- Medical Records Table
+-- ===============================================================================================================
+
+CREATE TABLE medical_records (
+    record_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_number VARCHAR(20) NOT NULL,
+    staff_id INT NOT NULL,
+    campus_id INT NOT NULL,
+    visit_id INT,
+    diagnosis TEXT,
+    treatment TEXT,
+    prescription TEXT,
+    attachments VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_number) REFERENCES students(student_number),
+    FOREIGN KEY (staff_id) REFERENCES staff(staff_id),
+    FOREIGN KEY (campus_id) REFERENCES campuses(campus_id),
+    FOREIGN KEY (visit_id) REFERENCES clinic_visits(visit_id)
+);
+
+-- ===============================================================================================================
+-- Campus Queuing System Table
+-- ===============================================================================================================
+
+CREATE TABLE campus_queue (
+    queue_id INT AUTO_INCREMENT PRIMARY KEY,
+    campus_id INT NOT NULL,
+    student_number VARCHAR(20) NOT NULL,
+    service_type ENUM('General Consultation','Dental','Mental Health','Vaccination','Other') NOT NULL,
+    queue_status ENUM('Waiting','In Progress','Completed','Skipped') DEFAULT 'Waiting',
+    position_number INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (campus_id) REFERENCES campuses(campus_id),
+    FOREIGN KEY (student_number) REFERENCES students(student_number)
+);
+
+-- ===============================================================================================================
+-- Campus Mental Health Care Table
+-- ===============================================================================================================
+
+CREATE TABLE mental_health_rooms (
+    room_id INT AUTO_INCREMENT PRIMARY KEY,
+    campus_id INT NOT NULL,
+    room_name VARCHAR(100) NOT NULL,
+    capacity INT DEFAULT 1,
+    is_available BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (campus_id) REFERENCES campuses(campus_id)
+);
+
+-- ===============================================================================================================
+-- Campus Mental Health Sessions Table
+-- ===============================================================================================================
+CREATE TABLE campus_mental_health (
+    session_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_number VARCHAR(20) NOT NULL,
+    counselor_id INT NOT NULL,         -- links to staff table (role = Counselor)
+    campus_id INT NOT NULL,
+    room_id INT,                       -- new: assigned room for the session
+    session_type ENUM('Counseling','Therapy','Support Group','Emergency Session') NOT NULL,
+    session_date DATETIME NOT NULL,
+    notes TEXT,
+    status ENUM('Scheduled','Completed','Cancelled') DEFAULT 'Scheduled',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_number) REFERENCES students(student_number),
+    FOREIGN KEY (counselor_id) REFERENCES staff(staff_id),
+    FOREIGN KEY (campus_id) REFERENCES campuses(campus_id),
+    FOREIGN KEY (room_id) REFERENCES mental_health_rooms(room_id)
+);
+
+--=======================================================================================================
+-- Inventory Management
+--=======================================================================================================
+
+CREATE TABLE medical_inventory (
+    item_id INT AUTO_INCREMENT PRIMARY KEY,
+    campus_id INT NOT NULL,
+    item_name VARCHAR(100) NOT NULL,
+    category ENUM('Medication','Vaccine','Medical Supply','Equipment') NOT NULL,
+    quantity INT NOT NULL,
+    min_threshold INT DEFAULT 10,
+    unit VARCHAR(20),
+    expiry_date DATE,
+    supplier VARCHAR(100),
+    last_restocked DATE,
+    FOREIGN KEY (campus_id) REFERENCES campuses(campus_id)
+);
+
+--=======================================================================================================
+-- analytics and reports
+--=======================================================================================================
+
+CREATE TABLE health_metrics (
+    metric_id INT AUTO_INCREMENT PRIMARY KEY,
+    campus_id INT NOT NULL,
+    metric_date DATE NOT NULL,
+    metric_type ENUM('Visits','Appointments','Medications','Vaccinations') NOT NULL,
+    count INT NOT NULL,
+    category VARCHAR(50),
+    FOREIGN KEY (campus_id) REFERENCES campuses(campus_id)
+);
+
+--=======================================================================================================
+-- AUDITS
+--=======================================================================================================
+
+CREATE TABLE audit_logs (
+    log_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    action VARCHAR(100) NOT NULL,
+    table_name VARCHAR(50) NOT NULL,
+    record_id VARCHAR(100),
+    old_values JSON,
+    new_values JSON,
+    ip_address VARCHAR(45),
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
