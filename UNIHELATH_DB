@@ -211,7 +211,9 @@ CREATE TABLE walkins (
     student_number VARCHAR(20) NOT NULL,
     campus_id INT NOT NULL,
     nurse_id INT NOT NULL,
-    service_type ENUM('General Consultation','Preventive Care','Reproductive & Sexual Health','Women’s Health','Men’s Health','Health Education & Awareness','Pharmacy Services','Special Programs','Dental','Mental Health','Follow-up','Vaccination','Allergy Testing','Physical Examination') NOT NULL;
+    service_type ENUM('General Consultation','Preventive Care','Reproductive & Sexual Health','Women’s Health',
+    'Men’s Health','Health Education & Awareness','Pharmacy Services','Special Programs','Dental','Mental Health',
+    'Follow-up','Vaccination','Allergy Testing','Physical Examination') NOT NULL;
     reason TEXT,
     urgency ENUM('Routine', 'Urgent', 'Emergency') DEFAULT 'Routine',
     status ENUM('Pending', 'In Progress', 'Completed', 'Cancelled') DEFAULT 'Pending',
