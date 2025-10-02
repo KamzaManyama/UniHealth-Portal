@@ -87,29 +87,33 @@
 
             <!-- Filter Section -->
             <div class="bg-white rounded-lg shadow mb-6 p-4">
-                <div class="flex flex-col md:flex-row md:items-center justify-between">
-                    <h3 class="text-lg font-medium text-gray-800 mb-2 md:mb-0">Filter Appointments</h3>
-                    <div class="flex flex-wrap gap-2">
-                        <select id="status-filter" class="filter-option px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-medlightblue focus:border-medlightblue">
-                            <option value="all">All Statuses</option>
-                            <option value="upcoming">Upcoming</option>
-                            <option value="completed">Completed</option>
-                            <option value="cancelled">Cancelled</option>
-                        </select>
-                     
-                       
-                        <select id="date-filter" class="filter-option px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-medlightblue focus:border-medlightblue">
-                            <option value="all">Any Date</option>
-                            <option value="today">Today</option>
-                            <option value="week">This Week</option>
-                            <option value="month">This Month</option>
-                        </select>
-                        <button id="clear-filters" class="px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-medlightblue">
-                            Clear Filters
-                        </button>
-                    </div>
-                </div>
-            </div>
+  <div class="flex flex-col md:flex-row md:items-center justify-between">
+    <h3 class="text-lg font-medium text-gray-800 mb-2 md:mb-0">Filter Appointments</h3>
+    <div class="flex flex-wrap items-center gap-2">
+      <select id="status-filter"
+        class="filter-option px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-medlightblue focus:border-medlightblue">
+        <option value="all">All Statuses</option>
+        <option value="upcoming">Upcoming</option>
+        <option value="completed">Completed</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+
+      <select id="date-filter"
+        class="filter-option px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-medlightblue focus:border-medlightblue">
+        <option value="all">Any Date</option>
+        <option value="today">Today</option>
+        <option value="week">This Week</option>
+        <option value="month">This Month</option>
+      </select>
+
+      <button id="clear-filters"
+        class="filter-option px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-medlightblue">
+        Clear Filters
+      </button>
+    </div>
+  </div>
+</div>
+
 
             <!-- Appointments List -->
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
@@ -584,3 +588,4 @@
 </body>
 
 </html>
+
