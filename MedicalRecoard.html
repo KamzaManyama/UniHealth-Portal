@@ -79,33 +79,38 @@
 
             <!-- Filter Section -->
             <div class="bg-white rounded-lg shadow mb-6 p-4">
-                <div class="flex flex-col md:flex-row md:items-center justify-between">
-                    <h3 class="text-lg font-medium text-gray-800 mb-2 md:mb-0">
-                    Filter Medical Records
-                    </h3>
-                    <div class="flex items-center gap-2 flex-nowrap">
-                    <select id="type-filter"
-                        class="filter-option w-36 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-medlightblue focus:border-medlightblue">
-                        <option value="all">All Types</option>
-                        <option value="checkup">Check-up</option>
-                        <option value="allergy">Allergy</option>
-                        <option value="dental">Dental</option>
-                        <option value="vaccination">Vaccination</option>
-                    </select>
-                    <select id="date-filter"
-                        class="filter-option w-36 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-medlightblue focus:border-medlightblue">
-                        <option value="all">Any Date</option>
-                        <option value="month">Past Month</option>
-                        <option value="3months">Past 3 Months</option>
-                        <option value="year">Past Year</option>
-                    </select>
-                    <button id="clear-filters"
-                        class="px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-medlightblue whitespace-nowrap">
-                        Reset All
-                    </button>
-                    </div>
-                </div>
-                </div>
+  <div class="flex flex-col md:flex-row md:items-center justify-between">
+    <h3 class="text-lg font-medium text-gray-800 mb-2 md:mb-0">
+      Filter Medical Records
+    </h3>
+
+    <!-- applied same technique: items-center + flex-nowrap + overflow-x-auto -->
+    <div class="flex items-center gap-2 flex-nowrap overflow-x-auto">
+      <select id="type-filter"
+        class="filter-option h-10 min-w-[7rem] px-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-medlightblue focus:border-medlightblue appearance-none">
+        <option value="all">All Types</option>
+        <option value="checkup">Check-up</option>
+        <option value="allergy">Allergy</option>
+        <option value="dental">Dental</option>
+        <option value="vaccination">Vaccination</option>
+      </select>
+
+      <select id="date-filter"
+        class="filter-option h-10 min-w-[6rem] px-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-medlightblue focus:border-medlightblue appearance-none">
+        <option value="all">Any Date</option>
+        <option value="month">Past Month</option>
+        <option value="3months">Past 3 Months</option>
+        <option value="year">Past Year</option>
+      </select>
+
+      <button id="clear-filters"
+        class="filter-option h-10 px-3 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-medlightblue whitespace-nowrap">
+        Reset All
+      </button>
+    </div>
+  </div>
+</div>
+
 
 
 
