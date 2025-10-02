@@ -86,5 +86,137 @@
     "duration": "40 minutes",
     "purpose": "Diet planning",
     "location": "TUT Wellness Center"
+  },
+  {
+    "id": 9,
+    "title": "Blood Test",
+    "status": "upcoming",
+    "type": "lab",
+    "date": "2023-11-18",
+    "time": "09:45",
+    "duration": "20 minutes",
+    "purpose": "Routine blood work",
+    "location": "TUT Diagnostic Lab, Room 301"
+  },
+  {
+    "id": 10,
+    "title": "X-Ray Examination",
+    "status": "completed",
+    "type": "radiology",
+    "date": "2023-08-05",
+    "time": "12:00",
+    "duration": "25 minutes",
+    "purpose": "Chest X-ray",
+    "location": "TUT Radiology Department"
+  },
+  {
+    "id": 11,
+    "title": "Hearing Test",
+    "status": "upcoming",
+    "type": "audiology",
+    "date": "2023-11-20",
+    "time": "10:15",
+    "duration": "30 minutes",
+    "purpose": "Annual hearing screening",
+    "location": "TUT Audiology Clinic, Room 110"
+  },
+  {
+    "id": 12,
+    "title": "Physician Consultation",
+    "status": "cancelled",
+    "type": "consultation",
+    "date": "2023-09-12",
+    "time": "15:30",
+    "duration": "30 minutes",
+    "purpose": "General medical advice",
+    "location": "TUT Main Campus Clinic"
+  },
+  {
+    "id": 13,
+    "title": "Orthopedic Appointment",
+    "status": "completed",
+    "type": "orthopedic",
+    "date": "2023-07-28",
+    "time": "14:00",
+    "duration": "50 minutes",
+    "purpose": "Back pain evaluation",
+    "location": "TUT Orthopedic Center, Room 212"
+  },
+  {
+    "id": 14,
+    "title": "Skin Screening",
+    "status": "upcoming",
+    "type": "dermatology",
+    "date": "2023-11-25",
+    "time": "11:30",
+    "duration": "40 minutes",
+    "purpose": "Skin check for moles",
+    "location": "TUT Dermatology Unit"
+  },
+  {
+    "id": 15,
+    "title": "Cardiology Follow-up",
+    "status": "upcoming",
+    "type": "cardiology",
+    "date": "2023-11-30",
+    "time": "09:00",
+    "duration": "60 minutes",
+    "purpose": "Monitor heart condition",
+    "location": "TUT Cardiology Department"
+  },
+  {
+    "id": 16,
+    "title": "Physiotherapy Session",
+    "status": "completed",
+    "type": "therapy",
+    "date": "2023-06-22",
+    "time": "10:45",
+    "duration": "45 minutes",
+    "purpose": "Shoulder rehabilitation",
+    "location": "TUT Sports Medicine Center"
+  },
+  {
+    "id": 17,
+    "title": "Mental Health Counseling",
+    "status": "upcoming",
+    "type": "counseling",
+    "date": "2023-12-05",
+    "time": "13:00",
+    "duration": "60 minutes",
+    "purpose": "Stress management",
+    "location": "TUT Student Wellness Center, Room 208"
+  },
+  {
+    "id": 18,
+    "title": "COVID-19 Booster",
+    "status": "completed",
+    "type": "vaccination",
+    "date": "2023-09-05",
+    "time": "09:15",
+    "duration": "20 minutes",
+    "purpose": "COVID-19 booster dose",
+    "location": "TUT Main Campus Clinic, Room 108"
+  },
+  {
+    "id": 19,
+    "title": "Gynecology Check-up",
+    "status": "upcoming",
+    "type": "gynecology",
+    "date": "2023-12-12",
+    "time": "14:45",
+    "duration": "50 minutes",
+    "purpose": "Routine gynecological exam",
+    "location": "TUT Women’s Health Clinic"
+  },
+  {
+    "id": 20,
+    "title": "Chiropractic Session",
+    "status": "upcoming",
+    "type": "chiropractic",
+    "date": "2023-12-18",
+    "time": "15:30",
+    "duration": "45 minutes",
+    "purpose": "Neck pain treatment",
+    "location": "TUT Chiropractic Center"
   }
 ]
