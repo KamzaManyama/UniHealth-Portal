@@ -42,11 +42,14 @@
         .filter-option:hover {
             background-color: #EFF6FF;
         }
+        .border-bottom-fix {
+            border-bottom: 1px solid #e5e7eb;
+        }
     </style>
 </head>
 <body class="bg-gray-100 font-sans">
     <!-- Top Navigation -->
-   <nav class="bg-white shadow-md fixed top-0 w-full z-50 transition-all duration-300" id="navbar">
+    <nav class="bg-white shadow-md fixed top-0 w-full z-50 transition-all duration-300" id="navbar">
         <div class="max-w-7xl mx-auto px-6 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center ">
                 <div class="flex items-center">
@@ -83,242 +86,69 @@
     <main class="pt-20 py-6 mb-20">
         <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Header -->
-          
+            <div class="mb-6">
+                <h1 class="text-2xl font-bold text-gray-900">My Appointments</h1>
+                <p class="text-gray-600 mt-1" id="appointment-count">Loading appointments...</p>
+            </div>
         
-                    <!-- Filter Section -->
-                   <div class="bg-white rounded-lg shadow mb-6 p-4">
-  <div class="flex flex-col md:flex-row md:items-center justify-between">
-    <h3 class="text-lg font-medium text-gray-800 mb-2 md:mb-0">Filter Appointments</h3>
+            <!-- Filter Section -->
+            <div class="bg-white rounded-lg shadow mb-6 p-4">
+                <div class="flex flex-col md:flex-row md:items-center justify-between">
+                    <h3 class="text-lg font-medium text-gray-800 mb-2 md:mb-0">Filter Appointments</h3>
 
-    <!-- changed: items-center + flex-nowrap + overflow-x-auto -->
-    <div class="flex items-center gap-2 flex-nowrap overflow-x-auto">
-      <select id="status-filter"
-        class="filter-option h-10 min-w-[7rem] px-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-medlightblue focus:border-medlightblue appearance-none">
-        <option value="all">All Statuses</option>
-        <option value="upcoming">Upcoming</option>
-        <option value="completed">Completed</option>
-        <option value="cancelled">Cancelled</option>
-      </select>
+                    <!-- changed: items-center + flex-nowrap + overflow-x-auto -->
+                    <div class="flex items-center gap-2 flex-nowrap overflow-x-auto">
+                        <select id="status-filter"
+                            class="filter-option h-10 min-w-[7rem] px-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-medlightblue focus:border-medlightblue appearance-none">
+                            <option value="all">All Statuses</option>
+                            <option value="upcoming">Upcoming</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
 
-      <select id="date-filter"
-        class="filter-option h-10 min-w-[6rem] px-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-medlightblue focus:border-medlightblue appearance-none">
-        <option value="all">Any Date</option>
-        <option value="today">Today</option>
-        <option value="week">This Week</option>
-        <option value="month">This Month</option>
-      </select>
+                        <select id="date-filter"
+                            class="filter-option h-10 min-w-[6rem] px-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-medlightblue focus:border-medlightblue appearance-none">
+                            <option value="all">Any Date</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                        </select>
 
-      <button id="clear-filters"
-        class="filter-option h-10 px-3 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-medlightblue">
-        Reset All
-      </button>
-    </div>
-  </div>
-</div>
-
-
+                        <button id="clear-filters"
+                            class="filter-option h-10 px-3 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-medlightblue">
+                            Reset All
+                        </button>
+                    </div>
+                </div>
+            </div>
 
             <!-- Appointments List -->
             <div id="appointments-container">
-                        <!-- Appointment 1 - Upcoming -->
-                        <div class="border-b border-gray-200 bg-white appointment-details appointment-card" data-status="upcoming" data-type="checkup" data-date="2023-10-18">
-                            <div class="px-4 py-4 sm:px-6 cursor-pointer" onclick="toggleDetails(this)">
-                                <div class="flex items-center justify-between">
-                                    <p class="text-sm font-medium text-medblue truncate">General Check-up</p>
-                                    <div class="ml-2 flex-shrink-0 flex">
-                                        <!-- STATUS instead of date -->
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Upcoming</span>
-                                    </div>
-                                </div>
-                                <div class="mt-2 flex items-center text-sm text-gray-500">
-                                    <i class="fas fa-map-marker-alt mr-1.5 text-gray-400"></i>
-                                    TUT Main Campus Clinic, Room 205
-                                </div>
-                            </div>
+                <!-- Appointments will be loaded here dynamically -->
+            </div>
 
-                            <!-- Expanded Details -->
-                            <div class="px-4 py-4 bg-gray-50 hidden details-content">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <h4 class="text-sm font-medium text-gray-700 mb-2">Appointment Details</h4>
-                                        <div class="space-y-2">
-                                            <div class="flex">
-                                                <div class="w-1/3 text-sm text-gray-500">Date:</div>
-                                                <div class="w-2/3 text-sm font-medium">October 28, 2023</div>
-                                            </div>
-                                            <div class="flex">
-                                                <div class="w-1/3 text-sm text-gray-500">Time:</div>
-                                                <div class="w-2/3 text-sm font-medium">11:00</div>
-                                            </div>
-                                            <div class="flex">
-                                                <div class="w-1/3 text-sm text-gray-500">Duration:</div>
-                                                <div class="w-2/3 text-sm font-medium">30 minutes</div>
-                                            </div>
-                                            <div class="flex">
-                                                <div class="w-1/3 text-sm text-gray-500">Purpose:</div>
-                                                <div class="w-2/3 text-sm font-medium">Routine health check-up</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Buttons only for upcoming -->
-                                <div class="mt-4 flex justify-start space-x-3">
-                                    <button type="button" class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-medlightblue" onclick="openRescheduleModal()">
-                                        <i class="fas fa-calendar-alt mr-2 text-medlightblue"></i> Reschedule
-                                    </button>
-                                    <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-medred hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" onclick="openCancelModal()">
-                                        <i class="fas fa-times-circle mr-2"></i> Cancel Appointment
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+            <!-- Pagination -->
+            <div id="pagination" class="mt-6 flex justify-center items-center space-x-2 hidden">
+                <button id="prev-page" class="px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                    Previous
+                </button>
+                <div id="page-numbers" class="flex space-x-1"></div>
+                <button id="next-page" class="px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                    Next
+                </button>
+            </div>
 
-                        <!-- Appointment 2 - Upcoming -->
-                        <div class="border-b border-gray-200 bg-white appointment-details appointment-card" data-status="upcoming" data-type="allergy" data-date="2023-10-25">
-                            <div class="px-4 py-4 sm:px-6 cursor-pointer" onclick="toggleDetails(this)">
-                                <div class="flex items-center justify-between">
-                                    <p class="text-sm font-medium text-medblue truncate">Allergy Consultation</p>
-                                    <div class="ml-2 flex-shrink-0 flex">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Upcoming</span>
-                                    </div>
-                                </div>
-                                <div class="mt-2 flex items-center text-sm text-gray-500">
-                                    <i class="fas fa-map-marker-alt mr-1.5 text-gray-400"></i>
-                                    TUT Main Campus Allergy Unit, Room 104
-                                </div>
-                            </div>
-
-                            <!-- Expanded Details -->
-                            <div class="px-4 py-4 bg-gray-50 hidden details-content">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <h4 class="text-sm font-medium text-gray-700 mb-2">Appointment Details</h4>
-                                        <div class="space-y-2">
-                                            <div class="flex">
-                                                <div class="w-1/3 text-sm text-gray-500">Date:</div>
-                                                <div class="w-2/3 text-sm font-medium">September 28, 2023</div>
-                                            </div>
-                                            <div class="flex">
-                                                <div class="w-1/3 text-sm text-gray-500">Time:</div>
-                                                <div class="w-2/3 text-sm font-medium">10:00</div>
-                                            </div>
-                                            <div class="flex">
-                                                <div class="w-1/3 text-sm text-gray-500">Duration:</div>
-                                                <div class="w-2/3 text-sm font-medium">45 minutes</div>
-                                            </div>
-                                            <div class="flex">
-                                                <div class="w-1/3 text-sm text-gray-500">Purpose:</div>
-                                                <div class="w-2/3 text-sm font-medium">Seasonal allergy assessment</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Buttons only for upcoming -->
-                                <div class="mt-4 flex justify-start space-x-3">
-                                    <button type="button" class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-medlightblue" onclick="openRescheduleModal()">
-                                        <i class="fas fa-calendar-alt mr-2 text-medlightblue"></i> Reschedule
-                                    </button>
-                                    <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-medred hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" onclick="openCancelModal()">
-                                        <i class="fas fa-times-circle mr-2"></i> Cancel Appointment
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Appointment 3 - Completed -->
-                        <div class="border-b border-gray-200 bg-white appointment-details appointment-card" data-status="completed" data-type="vaccination" data-date="2023-09-15">
-                            <div class="px-4 py-4 sm:px-6 cursor-pointer" onclick="toggleDetails(this)">
-                                <div class="flex items-center justify-between">
-                                    <p class="text-sm font-medium text-gray-500 truncate">Flu Vaccination</p>
-                                    <div class="ml-2 flex-shrink-0 flex">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Completed</span>
-                                    </div>
-                                </div>
-                                <div class="mt-2 flex items-center text-sm text-gray-500">
-                                    <i class="fas fa-map-marker-alt mr-1.5 text-gray-400"></i>
-                                    TUT Main Campus Clinic, Room 102
-                                </div>
-                            </div>
-
-                            <!-- Expanded Details (No buttons) -->
-                            <div class="px-4 py-4 bg-gray-50 hidden details-content">
-                                <div class="space-y-2">
-                                    <div class="flex">
-                                        <div class="w-1/3 text-sm text-gray-500">Date:</div>
-                                        <div class="w-2/3 text-sm font-medium">September 15, 2023</div>
-                                    </div>
-                                    <div class="flex">
-                                        <div class="w-1/3 text-sm text-gray-500">Time:</div>
-                                        <div class="w-2/3 text-sm font-medium">09:00</div>
-                                    </div>
-                                    <div class="flex">
-                                        <div class="w-1/3 text-sm text-gray-500">Duration:</div>
-                                        <div class="w-2/3 text-sm font-medium">15 minutes</div>
-                                    </div>
-                                    <div class="flex">
-                                        <div class="w-1/3 text-sm text-gray-500">Purpose:</div>
-                                        <div class="w-2/3 text-sm font-medium">Flu vaccination</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Appointment 4 - Cancelled -->
-                        <div class="border-b border-gray-200 bg-white appointment-details appointment-card" data-status="cancelled" data-type="checkup" data-date="2023-09-28">
-                            <div class="px-4 py-4 sm:px-6 cursor-pointer" onclick="toggleDetails(this)">
-                                <div class="flex items-center justify-between">
-                                    <p class="text-sm font-medium text-gray-400 truncate">General Check-up</p>
-                                    <div class="ml-2 flex-shrink-0 flex">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Cancelled</span>
-                                    </div>
-                                </div>
-                                <div class="mt-2 flex items-center text-sm text-gray-500">
-                                    <i class="fas fa-map-marker-alt mr-1.5 text-gray-400"></i>
-                                    TUT Main Campus Clinic, Room 205
-                                </div>
-                            </div>
-
-                            <!-- Expanded Details (No buttons) -->
-                            <div class="px-4 py-4 bg-gray-50 hidden details-content">
-                                <div class="space-y-2">
-                                    <div class="flex">
-                                        <div class="w-1/3 text-sm text-gray-500">Date:</div>
-                                        <div class="w-2/3 text-sm font-medium">September 28, 2023</div>
-                                    </div>
-                                    <div class="flex">
-                                        <div class="w-1/3 text-sm text-gray-500">Time:</div>
-                                        <div class="w-2/3 text-sm font-medium">15:00</div>
-                                    </div>
-                                    <div class="flex">
-                                        <div class="w-1/3 text-sm text-gray-500">Duration:</div>
-                                        <div class="w-2/3 text-sm font-medium">30 minutes</div>
-                                    </div>
-                                    <div class="flex">
-                                        <div class="w-1/3 text-sm text-gray-500">Purpose:</div>
-                                        <div class="w-2/3 text-sm font-medium">Routine health check-up</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    
-                </div>
-
-
-                <!-- No results message (hidden by default) -->
-                <div id="no-results" class="hidden px-4 py-12 text-center">
-                    <i class="fas fa-calendar-times text-4xl text-gray-300 mb-3"></i>
-                    <h3 class="text-lg font-medium text-gray-700">No appointments found</h3>
-                    <p class="text-gray-500 mt-1">Try adjusting your filters to see more results.</p>
-                </div>
+            <!-- No results message (hidden by default) -->
+            <div id="no-results" class="hidden px-4 py-12 text-center">
+                <i class="fas fa-calendar-times text-4xl text-gray-300 mb-3"></i>
+                <h3 class="text-lg font-medium text-gray-700">No appointments found</h3>
+                <p class="text-gray-500 mt-1">Try adjusting your filters to see more results.</p>
             </div>
         </div>
     </main>
 
-      <!-- Bottom Navigation (Mobile Only) -->
-      <nav class="bottom-nav fixed bottom-0 w-full bg-white border-t border-gray-200 z-40 md:hidden">
+    <!-- Bottom Navigation (Mobile Only) -->
+    <nav class="bottom-nav fixed bottom-0 w-full bg-white border-t border-gray-200 z-40 md:hidden">
         <div class="grid grid-cols-4 gap-1 py-2">
             <a href="index.html" class="flex flex-col items-center justify-center p-2 text-gray-500 hover:text-medblue">
                 <i class="fas fa-home text-lg"></i>
@@ -430,7 +260,13 @@
     </div>
 
     <script>
-        // Toggle appointment details
+        // Global variables
+        let allAppointments = [];
+        let filteredAppointments = [];
+        let currentPage = 1;
+        const appointmentsPerPage = 5;
+
+        // Toggle appointment details - Fixed border issue
         function toggleDetails(element) {
             const detailsContent = element.nextElementSibling;
             const allDetails = document.querySelectorAll('.details-content');
@@ -439,11 +275,22 @@
             allDetails.forEach(detail => {
                 if (detail !== detailsContent && !detail.classList.contains('hidden')) {
                     detail.classList.add('hidden');
+                    // Restore border when closing
+                    const parentCard = detail.closest('.appointment-card');
+                    parentCard.classList.add('border-bottom-fix');
                 }
             });
             
             // Toggle current details
             detailsContent.classList.toggle('hidden');
+            
+            // Handle border for current card
+            const currentCard = element.closest('.appointment-card');
+            if (detailsContent.classList.contains('hidden')) {
+                currentCard.classList.add('border-bottom-fix');
+            } else {
+                currentCard.classList.remove('border-bottom-fix');
+            }
         }
         
         // Modal functions
@@ -481,95 +328,260 @@
             }
         }
 
+        // Load appointments from JSON
+        async function loadAppointments() {
+            try {
+                // In a real application, this would be a fetch to your API
+                // For demo purposes, we'll use a simulated JSON response
+                const response = await fetch('appointments.json');
+                allAppointments = await response.json();
+                
+                // Initialize with all appointments
+                filteredAppointments = [...allAppointments];
+                
+                // Render the first page
+                renderAppointments();
+                setupPagination();
+                updateAppointmentCount();
+            } catch (error) {
+                console.error('Error loading appointments:', error);
+                document.getElementById('appointments-container').innerHTML = 
+                    '<p class="text-center text-red-500">Error loading appointments. Please try again later.</p>';
+            }
+        }
+
+        // Render appointments based on current page and filters
+        function renderAppointments() {
+            const container = document.getElementById('appointments-container');
+            const startIndex = (currentPage - 1) * appointmentsPerPage;
+            const endIndex = startIndex + appointmentsPerPage;
+            const currentAppointments = filteredAppointments.slice(startIndex, endIndex);
+            
+            if (currentAppointments.length === 0) {
+                container.innerHTML = '';
+                document.getElementById('no-results').classList.remove('hidden');
+                document.getElementById('pagination').classList.add('hidden');
+                return;
+            }
+            
+            document.getElementById('no-results').classList.add('hidden');
+            
+            let html = '';
+            currentAppointments.forEach((appointment, index) => {
+                const isLast = index === currentAppointments.length - 1;
+                const borderClass = isLast ? '' : 'border-bottom-fix';
+                
+                html += `
+                    <div class="bg-white appointment-card ${borderClass}" data-status="${appointment.status}" data-type="${appointment.type}" data-date="${appointment.date}">
+                        <div class="px-4 py-4 sm:px-6 cursor-pointer" onclick="toggleDetails(this)">
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm font-medium ${appointment.status === 'completed' || appointment.status === 'cancelled' ? 'text-gray-500' : 'text-medblue'} truncate">${appointment.title}</p>
+                                <div class="ml-2 flex-shrink-0 flex">
+                                    ${getStatusBadge(appointment.status)}
+                                </div>
+                            </div>
+                            <div class="mt-2 flex items-center text-sm text-gray-500">
+                                <i class="fas fa-map-marker-alt mr-1.5 text-gray-400"></i>
+                                ${appointment.location}
+                            </div>
+                        </div>
+
+                        <!-- Expanded Details -->
+                        <div class="px-4 py-4 bg-gray-50 hidden details-content">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <h4 class="text-sm font-medium text-gray-700 mb-2">Appointment Details</h4>
+                                    <div class="space-y-2">
+                                        <div class="flex">
+                                            <div class="w-1/3 text-sm text-gray-500">Date:</div>
+                                            <div class="w-2/3 text-sm font-medium">${formatDisplayDate(appointment.date)}</div>
+                                        </div>
+                                        <div class="flex">
+                                            <div class="w-1/3 text-sm text-gray-500">Time:</div>
+                                            <div class="w-2/3 text-sm font-medium">${appointment.time}</div>
+                                        </div>
+                                        <div class="flex">
+                                            <div class="w-1/3 text-sm text-gray-500">Duration:</div>
+                                            <div class="w-2/3 text-sm font-medium">${appointment.duration}</div>
+                                        </div>
+                                        <div class="flex">
+                                            <div class="w-1/3 text-sm text-gray-500">Purpose:</div>
+                                            <div class="w-2/3 text-sm font-medium">${appointment.purpose}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            ${appointment.status === 'upcoming' ? `
+                            <!-- Buttons only for upcoming -->
+                            <div class="mt-4 flex justify-start space-x-3">
+                                <button type="button" class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-medlightblue" onclick="openRescheduleModal()">
+                                    <i class="fas fa-calendar-alt mr-2 text-medlightblue"></i> Reschedule
+                                </button>
+                                <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-medred hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" onclick="openCancelModal()">
+                                    <i class="fas fa-times-circle mr-2"></i> Cancel Appointment
+                                </button>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Helper function to get status badge
+        function getStatusBadge(status) {
+            const statusConfig = {
+                'upcoming': { class: 'bg-blue-100 text-blue-800', text: 'Upcoming' },
+                'completed': { class: 'bg-green-100 text-green-800', text: 'Completed' },
+                'cancelled': { class: 'bg-red-100 text-red-800', text: 'Cancelled' }
+            };
+            
+            const config = statusConfig[status] || statusConfig.upcoming;
+            return `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${config.class}">${config.text}</span>`;
+        }
+
+        // Format date for display
+        function formatDisplayDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('en-US', options);
+        }
+
+        // Setup pagination
+        function setupPagination() {
+            const totalPages = Math.ceil(filteredAppointments.length / appointmentsPerPage);
+            const pagination = document.getElementById('pagination');
+            const pageNumbers = document.getElementById('page-numbers');
+            const prevButton = document.getElementById('prev-page');
+            const nextButton = document.getElementById('next-page');
+            
+            if (totalPages <= 1) {
+                pagination.classList.add('hidden');
+                return;
+            }
+            
+            pagination.classList.remove('hidden');
+            
+            // Clear existing page numbers
+            pageNumbers.innerHTML = '';
+            
+            // Previous button
+            prevButton.disabled = currentPage === 1;
+            prevButton.onclick = () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderAppointments();
+                    setupPagination();
+                }
+            };
+            
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.className = `px-3 py-2 text-sm font-medium rounded-md ${currentPage === i ? 'bg-medblue text-white' : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50'}`;
+                pageButton.textContent = i;
+                pageButton.onclick = () => {
+                    currentPage = i;
+                    renderAppointments();
+                    setupPagination();
+                };
+                pageNumbers.appendChild(pageButton);
+            }
+            
+            // Next button
+            nextButton.disabled = currentPage === totalPages;
+            nextButton.onclick = () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderAppointments();
+                    setupPagination();
+                }
+            };
+        }
+
+        // Update appointment count text
+        function updateAppointmentCount() {
+            const totalCount = filteredAppointments.length;
+            const startIndex = (currentPage - 1) * appointmentsPerPage + 1;
+            const endIndex = Math.min(currentPage * appointmentsPerPage, totalCount);
+            
+            let countText;
+            if (totalCount === 0) {
+                countText = 'No appointments found';
+            } else if (totalCount <= appointmentsPerPage) {
+                countText = `Showing ${totalCount} appointment${totalCount !== 1 ? 's' : ''}`;
+            } else {
+                countText = `Showing ${startIndex}-${endIndex} of ${totalCount} appointments`;
+            }
+            
+            document.getElementById('appointment-count').textContent = countText;
+        }
+
         // Filter functionality
+        function filterAppointments() {
+            const statusValue = document.getElementById('status-filter').value;
+            const dateValue = document.getElementById('date-filter').value;
+            
+            filteredAppointments = allAppointments.filter(appointment => {
+                const statusMatch = statusValue === 'all' || appointment.status === statusValue;
+                const dateMatch = dateValue === 'all' || isDateInRange(appointment.date, dateValue);
+                
+                return statusMatch && dateMatch;
+            });
+            
+            // Reset to first page when filtering
+            currentPage = 1;
+            
+            renderAppointments();
+            setupPagination();
+            updateAppointmentCount();
+        }
+        
+        function isDateInRange(dateString, range) {
+            const appointmentDate = new Date(dateString);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            switch(range) {
+                case 'today':
+                    return dateString === formatDate(today);
+                case 'week':
+                    const nextWeek = new Date();
+                    nextWeek.setDate(today.getDate() + 7);
+                    return appointmentDate >= today && appointmentDate <= nextWeek;
+                case 'month':
+                    const nextMonth = new Date();
+                    nextMonth.setMonth(today.getMonth() + 1);
+                    return appointmentDate >= today && appointmentDate <= nextMonth;
+                default:
+                    return true;
+            }
+        }
+        
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
+        function clearFilters() {
+            document.getElementById('status-filter').value = 'all';
+            document.getElementById('date-filter').value = 'all';
+            filterAppointments();
+        }
+
+        // Initialize when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            const statusFilter = document.getElementById('status-filter');
-            const typeFilter = document.getElementById('type-filter');
-            const dateFilter = document.getElementById('date-filter');
-            const clearFiltersBtn = document.getElementById('clear-filters');
-            const appointments = document.querySelectorAll('.appointment-card');
-            const noResultsMessage = document.getElementById('no-results');
-            const appointmentCount = document.getElementById('appointment-count');
-            
             // Add event listeners to filters
-            statusFilter.addEventListener('change', filterAppointments);
-            typeFilter.addEventListener('change', filterAppointments);
-            dateFilter.addEventListener('change', filterAppointments);
-            clearFiltersBtn.addEventListener('click', clearFilters);
+            document.getElementById('status-filter').addEventListener('change', filterAppointments);
+            document.getElementById('date-filter').addEventListener('change', filterAppointments);
+            document.getElementById('clear-filters').addEventListener('click', clearFilters);
             
-            function filterAppointments() {
-                const statusValue = statusFilter.value;
-                const typeValue = typeFilter.value;
-                const dateValue = dateFilter.value;
-                
-                let visibleCount = 0;
-                
-                appointments.forEach(appointment => {
-                    const status = appointment.getAttribute('data-status');
-                    const type = appointment.getAttribute('data-type');
-                    const date = appointment.getAttribute('data-date');
-                    
-                    const statusMatch = statusValue === 'all' || status === statusValue;
-                    const typeMatch = typeValue === 'all' || type === typeValue;
-                    const dateMatch = dateValue === 'all' || isDateInRange(date, dateValue);
-                    
-                    if (statusMatch && typeMatch && dateMatch) {
-                        appointment.classList.remove('hidden');
-                        visibleCount++;
-                    } else {
-                        appointment.classList.add('hidden');
-                    }
-                });
-                
-                // Show/hide no results message
-                if (visibleCount === 0) {
-                    noResultsMessage.classList.remove('hidden');
-                } else {
-                    noResultsMessage.classList.add('hidden');
-                }
-                
-                // Update appointment count text
-                appointmentCount.textContent = `Showing ${visibleCount} appointment${visibleCount !== 1 ? 's' : ''}`;
-            }
-            
-            function isDateInRange(dateString, range) {
-                const appointmentDate = new Date(dateString);
-                const today = new Date();
-                
-                switch(range) {
-                    case 'today':
-                        return dateString === formatDate(today);
-                    case 'week':
-                        const nextWeek = new Date();
-                        nextWeek.setDate(today.getDate() + 7);
-                        return appointmentDate >= today && appointmentDate <= nextWeek;
-                    case 'month':
-                        const nextMonth = new Date();
-                        nextMonth.setMonth(today.getMonth() + 1);
-                        return appointmentDate >= today && appointmentDate <= nextMonth;
-                    default:
-                        return true;
-                }
-            }
-            
-            function formatDate(date) {
-                const year = date.getFullYear();
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const day = String(date.getDate()).padStart(2, '0');
-                return `${year}-${month}-${day}`;
-            }
-            
-            function clearFilters() {
-                statusFilter.value = 'all';
-                typeFilter.value = 'all';
-                dateFilter.value = 'all';
-                filterAppointments();
-            }
+            // Load appointments
+            loadAppointments();
         });
     </script>
 </body>
-
 </html>
-
-
-

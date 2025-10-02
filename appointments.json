@@ -1,0 +1,90 @@
+[
+  {
+    "id": 1,
+    "title": "General Check-up",
+    "status": "upcoming",
+    "type": "checkup",
+    "date": "2023-10-28",
+    "time": "11:00",
+    "duration": "30 minutes",
+    "purpose": "Routine health check-up",
+    "location": "TUT Main Campus Clinic, Room 205"
+  },
+  {
+    "id": 2,
+    "title": "Allergy Consultation",
+    "status": "upcoming",
+    "type": "allergy",
+    "date": "2023-10-25",
+    "time": "10:00",
+    "duration": "45 minutes",
+    "purpose": "Seasonal allergy assessment",
+    "location": "TUT Main Campus Allergy Unit, Room 104"
+  },
+  {
+    "id": 3,
+    "title": "Flu Vaccination",
+    "status": "completed",
+    "type": "vaccination",
+    "date": "2023-09-15",
+    "time": "09:00",
+    "duration": "15 minutes",
+    "purpose": "Flu vaccination",
+    "location": "TUT Main Campus Clinic, Room 102"
+  },
+  {
+    "id": 4,
+    "title": "General Check-up",
+    "status": "cancelled",
+    "type": "checkup",
+    "date": "2023-09-28",
+    "time": "15:00",
+    "duration": "30 minutes",
+    "purpose": "Routine health check-up",
+    "location": "TUT Main Campus Clinic, Room 205"
+  },
+  {
+    "id": 5,
+    "title": "Dental Check-up",
+    "status": "upcoming",
+    "type": "dental",
+    "date": "2023-11-05",
+    "time": "14:30",
+    "duration": "45 minutes",
+    "purpose": "Regular dental examination",
+    "location": "TUT Dental Clinic, Building B"
+  },
+  {
+    "id": 6,
+    "title": "Eye Examination",
+    "status": "completed",
+    "type": "eye",
+    "date": "2023-08-20",
+    "time": "13:15",
+    "duration": "60 minutes",
+    "purpose": "Annual eye check-up",
+    "location": "TUT Optometry Center"
+  },
+  {
+    "id": 7,
+    "title": "Physical Therapy",
+    "status": "upcoming",
+    "type": "therapy",
+    "date": "2023-11-12",
+    "time": "16:00",
+    "duration": "50 minutes",
+    "purpose": "Knee rehabilitation",
+    "location": "TUT Sports Medicine Center"
+  },
+  {
+    "id": 8,
+    "title": "Nutrition Consultation",
+    "status": "completed",
+    "type": "nutrition",
+    "date": "2023-07-10",
+    "time": "11:30",
+    "duration": "40 minutes",
+    "purpose": "Diet planning",
+    "location": "TUT Wellness Center"
+  }
+]
