@@ -262,328 +262,364 @@
     </div>
 
     <script>
-        // Global variables
-        let allAppointments = [];
-        let filteredAppointments = [];
-        let currentPage = 1;
-        const appointmentsPerPage = 5;
+    // Global variables
+    let allAppointments = [];
+    let filteredAppointments = [];
+    let currentPage = 1;
+    const appointmentsPerPage = 5;
 
-        // Toggle appointment details - Fixed border issue
-        function toggleDetails(element) {
-            const detailsContent = element.nextElementSibling;
-            const allDetails = document.querySelectorAll('.details-content');
-            
-            // Close all other open details
-            allDetails.forEach(detail => {
-                if (detail !== detailsContent && !detail.classList.contains('hidden')) {
-                    detail.classList.add('hidden');
-                    // Restore border when closing
-                    const parentCard = detail.closest('.appointment-card');
-                    parentCard.classList.add('border-bottom-fix');
-                }
-            });
-            
-            // Toggle current details
-            detailsContent.classList.toggle('hidden');
-            
-            // Handle border for current card
-            const currentCard = element.closest('.appointment-card');
-            if (detailsContent.classList.contains('hidden')) {
-                currentCard.classList.add('border-bottom-fix');
-            } else {
-                currentCard.classList.remove('border-bottom-fix');
+    // Toggle appointment details - Fixed border issue
+    function toggleDetails(element) {
+        const detailsContent = element.nextElementSibling;
+        const allDetails = document.querySelectorAll('.details-content');
+        
+        // Close all other open details
+        allDetails.forEach(detail => {
+            if (detail !== detailsContent && !detail.classList.contains('hidden')) {
+                detail.classList.add('hidden');
+                // Restore border when closing
+                const parentCard = detail.closest('.appointment-card');
+                parentCard.classList.add('border-bottom-fix');
             }
-        }
+        });
         
-        // Modal functions
-        function openRescheduleModal() {
-            document.getElementById('reschedule-modal').classList.remove('hidden');
-        }
+        // Toggle current details
+        detailsContent.classList.toggle('hidden');
         
-        function openCancelModal() {
-            document.getElementById('cancel-modal').classList.remove('hidden');
+        // Handle border for current card
+        const currentCard = element.closest('.appointment-card');
+        if (detailsContent.classList.contains('hidden')) {
+            currentCard.classList.add('border-bottom-fix');
+        } else {
+            currentCard.classList.remove('border-bottom-fix');
         }
-        
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.add('hidden');
-        }
-        
-        function rescheduleAppointment() {
-            // In a real application, this would send a request to the server
-            alert('Appointment rescheduled successfully!');
+    }
+    
+    // Modal functions
+    function openRescheduleModal() {
+        document.getElementById('reschedule-modal').classList.remove('hidden');
+    }
+    
+    function openCancelModal() {
+        document.getElementById('cancel-modal').classList.remove('hidden');
+    }
+    
+    function closeModal(modalId) {
+        document.getElementById(modalId).classList.add('hidden');
+    }
+    
+    function rescheduleAppointment() {
+        // In a real application, this would send a request to the server
+        alert('Appointment rescheduled successfully!');
+        closeModal('reschedule-modal');
+    }
+    
+    function cancelAppointment() {
+        // In a real application, this would send a request to the server
+        alert('Appointment cancelled successfully!');
+        closeModal('cancel-modal');
+    }
+    
+    // Close modals if clicked outside
+    window.onclick = function(event) {
+        if (event.target.id === 'reschedule-modal') {
             closeModal('reschedule-modal');
         }
-        
-        function cancelAppointment() {
-            // In a real application, this would send a request to the server
-            alert('Appointment cancelled successfully!');
+        if (event.target.id === 'cancel-modal') {
             closeModal('cancel-modal');
         }
-        
-        // Close modals if clicked outside
-        window.onclick = function(event) {
-            if (event.target.id === 'reschedule-modal') {
-                closeModal('reschedule-modal');
-            }
-            if (event.target.id === 'cancel-modal') {
-                closeModal('cancel-modal');
-            }
-        }
+    }
 
-        // Load appointments from JSON
-        async function loadAppointments() {
-            try {
-                // In a real application, this would be a fetch to your API
-                // For demo purposes, we'll use a simulated JSON response
-                const response = await fetch('appointments.json');
-                allAppointments = await response.json();
-                
-                // Initialize with all appointments
-                filteredAppointments = [...allAppointments];
-                
-                // Render the first page
-                renderAppointments();
-                setupPagination();
-                updateAppointmentCount();
-            } catch (error) {
-                console.error('Error loading appointments:', error);
-                document.getElementById('appointments-container').innerHTML = 
-                    '<p class="text-center text-red-500">Error loading appointments. Please try again later.</p>';
-            }
-        }
-
-        // Render appointments based on current page and filters
-        function renderAppointments() {
-            const container = document.getElementById('appointments-container');
-            const startIndex = (currentPage - 1) * appointmentsPerPage;
-            const endIndex = startIndex + appointmentsPerPage;
-            const currentAppointments = filteredAppointments.slice(startIndex, endIndex);
+    // Load appointments from JSON
+    async function loadAppointments() {
+        try {
+            // In a real application, this would be a fetch to your API
+            // For demo purposes, we'll use a simulated JSON response
+            const response = await fetch('appointments.json');
+            allAppointments = await response.json();
             
-            if (currentAppointments.length === 0) {
-                container.innerHTML = '';
-                document.getElementById('no-results').classList.remove('hidden');
-                document.getElementById('pagination').classList.add('hidden');
-                return;
-            }
+            // Initialize with all appointments
+            filteredAppointments = [...allAppointments];
             
-            document.getElementById('no-results').classList.add('hidden');
-            
-            let html = '';
-            currentAppointments.forEach((appointment, index) => {
-                const isLast = index === currentAppointments.length - 1;
-                const borderClass = isLast ? '' : 'border-bottom-fix';
-                
-                html += `
-                    <div class="bg-white appointment-card ${borderClass}" data-status="${appointment.status}" data-type="${appointment.type}" data-date="${appointment.date}">
-                        <div class="px-4 py-4 sm:px-6 cursor-pointer" onclick="toggleDetails(this)">
-                            <div class="flex items-center justify-between">
-                                <p class="text-sm font-medium ${appointment.status === 'completed' || appointment.status === 'cancelled' ? 'text-gray-500' : 'text-medblue'} truncate">${appointment.title}</p>
-                                <div class="ml-2 flex-shrink-0 flex">
-                                    ${getStatusBadge(appointment.status)}
-                                </div>
-                            </div>
-                            <div class="mt-2 flex items-center text-sm text-gray-500">
-                                <i class="fas fa-map-marker-alt mr-1.5 text-gray-400"></i>
-                                ${appointment.location}
-                            </div>
-                        </div>
-
-                        <!-- Expanded Details -->
-                        <div class="px-4 py-4 bg-gray-50 hidden details-content">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <h4 class="text-sm font-medium text-gray-700 mb-2">Appointment Details</h4>
-                                    <div class="space-y-2">
-                                        <div class="flex">
-                                            <div class="w-1/3 text-sm text-gray-500">Date:</div>
-                                            <div class="w-2/3 text-sm font-medium">${formatDisplayDate(appointment.date)}</div>
-                                        </div>
-                                        <div class="flex">
-                                            <div class="w-1/3 text-sm text-gray-500">Time:</div>
-                                            <div class="w-2/3 text-sm font-medium">${appointment.time}</div>
-                                        </div>
-                                        <div class="flex">
-                                            <div class="w-1/3 text-sm text-gray-500">Duration:</div>
-                                            <div class="w-2/3 text-sm font-medium">${appointment.duration}</div>
-                                        </div>
-                                        <div class="flex">
-                                            <div class="w-1/3 text-sm text-gray-500">Purpose:</div>
-                                            <div class="w-2/3 text-sm font-medium">${appointment.purpose}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            ${appointment.status === 'upcoming' ? `
-                            <!-- Buttons only for upcoming -->
-                            <div class="mt-4 flex justify-start space-x-3">
-                                <button type="button" class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-medlightblue" onclick="openRescheduleModal()">
-                                    <i class="fas fa-calendar-alt mr-2 text-medlightblue"></i> Reschedule
-                                </button>
-                                <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-medred hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" onclick="openCancelModal()">
-                                    <i class="fas fa-times-circle mr-2"></i> Cancel Appointment
-                                </button>
-                            </div>
-                            ` : ''}
-                        </div>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
-        }
-
-        // Helper function to get status badge
-        function getStatusBadge(status) {
-            const statusConfig = {
-                'upcoming': { class: 'bg-blue-100 text-blue-800', text: 'Upcoming' },
-                'completed': { class: 'bg-green-100 text-green-800', text: 'Completed' },
-                'cancelled': { class: 'bg-red-100 text-red-800', text: 'Cancelled' }
-            };
-            
-            const config = statusConfig[status] || statusConfig.upcoming;
-            return `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${config.class}">${config.text}</span>`;
-        }
-
-        // Format date for display
-        function formatDisplayDate(dateString) {
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            return new Date(dateString).toLocaleDateString('en-US', options);
-        }
-
-        // Setup pagination
-        function setupPagination() {
-            const totalPages = Math.ceil(filteredAppointments.length / appointmentsPerPage);
-            const pagination = document.getElementById('pagination');
-            const pageNumbers = document.getElementById('page-numbers');
-            const prevButton = document.getElementById('prev-page');
-            const nextButton = document.getElementById('next-page');
-            
-            if (totalPages <= 1) {
-                pagination.classList.add('hidden');
-                return;
-            }
-            
-            pagination.classList.remove('hidden');
-            
-            // Clear existing page numbers
-            pageNumbers.innerHTML = '';
-            
-            // Previous button
-            prevButton.disabled = currentPage === 1;
-            prevButton.onclick = () => {
-                if (currentPage > 1) {
-                    currentPage--;
-                    renderAppointments();
-                    setupPagination();
-                }
-            };
-            
-            // Page numbers
-            for (let i = 1; i <= totalPages; i++) {
-                const pageButton = document.createElement('button');
-                pageButton.className = `px-3 py-2 text-sm font-medium rounded-md ${currentPage === i ? 'bg-medblue text-white' : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50'}`;
-                pageButton.textContent = i;
-                pageButton.onclick = () => {
-                    currentPage = i;
-                    renderAppointments();
-                    setupPagination();
-                };
-                pageNumbers.appendChild(pageButton);
-            }
-            
-            // Next button
-            nextButton.disabled = currentPage === totalPages;
-            nextButton.onclick = () => {
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    renderAppointments();
-                    setupPagination();
-                }
-            };
-        }
-
-        // Update appointment count text
-        function updateAppointmentCount() {
-            const totalCount = filteredAppointments.length;
-            const startIndex = (currentPage - 1) * appointmentsPerPage + 1;
-            const endIndex = Math.min(currentPage * appointmentsPerPage, totalCount);
-            
-            let countText;
-            if (totalCount === 0) {
-                countText = 'No appointments found';
-            } else if (totalCount <= appointmentsPerPage) {
-                countText = `Showing ${totalCount} appointment${totalCount !== 1 ? 's' : ''}`;
-            } else {
-                countText = `Showing ${startIndex}-${endIndex} of ${totalCount} appointments`;
-            }
-            
-            document.getElementById('appointment-count').textContent = countText;
-        }
-
-        // Filter functionality
-        function filterAppointments() {
-            const statusValue = document.getElementById('status-filter').value;
-            const dateValue = document.getElementById('date-filter').value;
-            
-            filteredAppointments = allAppointments.filter(appointment => {
-                const statusMatch = statusValue === 'all' || appointment.status === statusValue;
-                const dateMatch = dateValue === 'all' || isDateInRange(appointment.date, dateValue);
-                
-                return statusMatch && dateMatch;
-            });
-            
-            // Reset to first page when filtering
-            currentPage = 1;
-            
+            // Render the first page
             renderAppointments();
             setupPagination();
             updateAppointmentCount();
+        } catch (error) {
+            console.error('Error loading appointments:', error);
+            document.getElementById('appointments-container').innerHTML = 
+                '<p class="text-center text-red-500">Error loading appointments. Please try again later.</p>';
+        }
+    }
+
+    // Render appointments based on current page and filters
+    function renderAppointments() {
+        const container = document.getElementById('appointments-container');
+        const startIndex = (currentPage - 1) * appointmentsPerPage;
+        const endIndex = startIndex + appointmentsPerPage;
+        const currentAppointments = filteredAppointments.slice(startIndex, endIndex);
+        
+        if (currentAppointments.length === 0) {
+            container.innerHTML = '';
+            document.getElementById('no-results').classList.remove('hidden');
+            document.getElementById('pagination').classList.add('hidden');
+            return;
         }
         
-        function isDateInRange(dateString, range) {
-            const appointmentDate = new Date(dateString);
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
+        document.getElementById('no-results').classList.add('hidden');
+        
+        let html = '';
+        currentAppointments.forEach((appointment, index) => {
+            const isLast = index === currentAppointments.length - 1;
+            const borderClass = isLast ? '' : 'border-bottom-fix';
             
-            switch(range) {
-                case 'today':
-                    return dateString === formatDate(today);
-                case 'week':
-                    const nextWeek = new Date();
-                    nextWeek.setDate(today.getDate() + 7);
-                    return appointmentDate >= today && appointmentDate <= nextWeek;
-                case 'month':
-                    const nextMonth = new Date();
-                    nextMonth.setMonth(today.getMonth() + 1);
-                    return appointmentDate >= today && appointmentDate <= nextMonth;
-                default:
-                    return true;
+            html += `
+                <div class="bg-white appointment-card ${borderClass}" data-status="${appointment.status}" data-type="${appointment.type}" data-date="${appointment.date}">
+                    <div class="px-4 py-4 sm:px-6 cursor-pointer" onclick="toggleDetails(this)">
+                        <div class="flex items-center justify-between">
+                            <p class="text-sm font-medium ${appointment.status === 'completed' || appointment.status === 'cancelled' ? 'text-gray-500' : 'text-medblue'} truncate">${appointment.title}</p>
+                            <div class="ml-2 flex-shrink-0 flex">
+                                ${getStatusBadge(appointment.status)}
+                            </div>
+                        </div>
+                        <div class="mt-2 flex items-center text-sm text-gray-500">
+                            <i class="fas fa-map-marker-alt mr-1.5 text-gray-400"></i>
+                            ${appointment.location}
+                        </div>
+                    </div>
+
+                    <!-- Expanded Details -->
+                    <div class="px-4 py-4 bg-gray-50 hidden details-content">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-700 mb-2">Appointment Details</h4>
+                                <div class="space-y-2">
+                                    <div class="flex">
+                                        <div class="w-1/3 text-sm text-gray-500">Date:</div>
+                                        <div class="w-2/3 text-sm font-medium">${formatDisplayDate(appointment.date)}</div>
+                                    </div>
+                                    <div class="flex">
+                                        <div class="w-1/3 text-sm text-gray-500">Time:</div>
+                                        <div class="w-2/3 text-sm font-medium">${appointment.time}</div>
+                                    </div>
+                                    <div class="flex">
+                                        <div class="w-1/3 text-sm text-gray-500">Duration:</div>
+                                        <div class="w-2/3 text-sm font-medium">${appointment.duration}</div>
+                                    </div>
+                                    <div class="flex">
+                                        <div class="w-1/3 text-sm text-gray-500">Purpose:</div>
+                                        <div class="w-2/3 text-sm font-medium">${appointment.purpose}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        ${appointment.status === 'upcoming' ? `
+                        <!-- Buttons only for upcoming -->
+                        <div class="mt-4 flex justify-start space-x-3">
+                            <button type="button" class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-medlightblue" onclick="openRescheduleModal()">
+                                <i class="fas fa-calendar-alt mr-2 text-medlightblue"></i> Reschedule
+                            </button>
+                            <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-medred hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" onclick="openCancelModal()">
+                                <i class="fas fa-times-circle mr-2"></i> Cancel Appointment
+                            </button>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+    }
+
+    // Helper function to get status badge
+    function getStatusBadge(status) {
+        const statusConfig = {
+            'upcoming': { class: 'bg-blue-100 text-blue-800', text: 'Upcoming' },
+            'completed': { class: 'bg-green-100 text-green-800', text: 'Completed' },
+            'cancelled': { class: 'bg-red-100 text-red-800', text: 'Cancelled' }
+        };
+        
+        const config = statusConfig[status] || statusConfig.upcoming;
+        return `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${config.class}">${config.text}</span>`;
+    }
+
+    // Format date for display
+    function formatDisplayDate(dateString) {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString('en-US', options);
+    }
+
+    // Setup pagination with dots for in-between pages
+    function setupPagination() {
+        const totalPages = Math.ceil(filteredAppointments.length / appointmentsPerPage);
+        const pagination = document.getElementById('pagination');
+        const pageNumbers = document.getElementById('page-numbers');
+        const prevButton = document.getElementById('prev-page');
+        const nextButton = document.getElementById('next-page');
+        
+        if (totalPages <= 1) {
+            pagination.classList.add('hidden');
+            return;
+        }
+        
+        pagination.classList.remove('hidden');
+        
+        // Clear existing page numbers
+        pageNumbers.innerHTML = '';
+        
+        // Previous button
+        prevButton.disabled = currentPage === 1;
+        prevButton.onclick = () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderAppointments();
+                setupPagination();
+            }
+        };
+        
+        // Always show first page
+        addPageButton(1, pageNumbers, totalPages);
+        
+        // Show dots after first page if needed
+        if (currentPage > 3) {
+            addDots(pageNumbers);
+        }
+        
+        // Show pages around current page
+        const startPage = Math.max(2, currentPage - 1);
+        const endPage = Math.min(totalPages - 1, currentPage + 1);
+        
+        for (let i = startPage; i <= endPage; i++) {
+            if (i !== 1 && i !== totalPages) {
+                addPageButton(i, pageNumbers, totalPages);
             }
         }
         
-        function formatDate(date) {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
+        // Show dots before last page if needed
+        if (currentPage < totalPages - 2) {
+            addDots(pageNumbers);
         }
         
-        function clearFilters() {
-            document.getElementById('status-filter').value = 'all';
-            document.getElementById('date-filter').value = 'all';
-            filterAppointments();
+        // Always show last page if there's more than 1 page
+        if (totalPages > 1) {
+            addPageButton(totalPages, pageNumbers, totalPages);
         }
+        
+        // Next button
+        nextButton.disabled = currentPage === totalPages;
+        nextButton.onclick = () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderAppointments();
+                setupPagination();
+            }
+        };
+    }
 
-        // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add event listeners to filters
-            document.getElementById('status-filter').addEventListener('change', filterAppointments);
-            document.getElementById('date-filter').addEventListener('change', filterAppointments);
-            document.getElementById('clear-filters').addEventListener('click', clearFilters);
+    // Helper function to add page button
+    function addPageButton(pageNum, container, totalPages) {
+        const pageButton = document.createElement('button');
+        pageButton.className = `px-3 py-2 text-sm font-medium rounded-md ${currentPage === pageNum ? 'bg-medblue text-white' : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50'}`;
+        pageButton.textContent = pageNum;
+        pageButton.onclick = () => {
+            currentPage = pageNum;
+            renderAppointments();
+            setupPagination();
+        };
+        container.appendChild(pageButton);
+    }
+
+    // Helper function to add dots
+    function addDots(container) {
+        const dots = document.createElement('span');
+        dots.className = 'px-2 py-2 text-sm text-gray-500';
+        dots.textContent = '...';
+        container.appendChild(dots);
+    }
+
+    // Update appointment count text
+    function updateAppointmentCount() {
+        const totalCount = filteredAppointments.length;
+        const startIndex = (currentPage - 1) * appointmentsPerPage + 1;
+        const endIndex = Math.min(currentPage * appointmentsPerPage, totalCount);
+        
+        let countText;
+        if (totalCount === 0) {
+            countText = 'No appointments found';
+        } else if (totalCount <= appointmentsPerPage) {
+            countText = `Showing ${totalCount} appointment${totalCount !== 1 ? 's' : ''}`;
+        } else {
+            countText = `Showing ${startIndex}-${endIndex} of ${totalCount} appointments`;
+        }
+        
+        document.getElementById('appointment-count').textContent = countText;
+    }
+
+    // Filter functionality
+    function filterAppointments() {
+        const statusValue = document.getElementById('status-filter').value;
+        const dateValue = document.getElementById('date-filter').value;
+        
+        filteredAppointments = allAppointments.filter(appointment => {
+            const statusMatch = statusValue === 'all' || appointment.status === statusValue;
+            const dateMatch = dateValue === 'all' || isDateInRange(appointment.date, dateValue);
             
-            // Load appointments
-            loadAppointments();
+            return statusMatch && dateMatch;
         });
-    </script>
+        
+        // Reset to first page when filtering
+        currentPage = 1;
+        
+        renderAppointments();
+        setupPagination();
+        updateAppointmentCount();
+    }
+    
+    function isDateInRange(dateString, range) {
+        const appointmentDate = new Date(dateString);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        switch(range) {
+            case 'today':
+                return dateString === formatDate(today);
+            case 'week':
+                const nextWeek = new Date();
+                nextWeek.setDate(today.getDate() + 7);
+                return appointmentDate >= today && appointmentDate <= nextWeek;
+            case 'month':
+                const nextMonth = new Date();
+                nextMonth.setMonth(today.getMonth() + 1);
+                return appointmentDate >= today && appointmentDate <= nextMonth;
+            default:
+                return true;
+        }
+    }
+    
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+    
+    function clearFilters() {
+        document.getElementById('status-filter').value = 'all';
+        document.getElementById('date-filter').value = 'all';
+        filterAppointments();
+    }
+
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add event listeners to filters
+        document.getElementById('status-filter').addEventListener('change', filterAppointments);
+        document.getElementById('date-filter').addEventListener('change', filterAppointments);
+        document.getElementById('clear-filters').addEventListener('click', clearFilters);
+        
+        // Load appointments
+        loadAppointments();
+    });
+</script>
 </body>
 </html>
