@@ -6,6 +6,8 @@
     <title>MedSchool Portal - My Medical History</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Include jsPDF library for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -48,6 +50,10 @@
         .transition-all {
             transition: all 0.3s ease;
         }
+        .pagination-btn.active {
+            background-color: #1E40AF;
+            color: white;
+        }
     </style>
 </head>
 <body class="bg-gray-100 font-sans">
@@ -88,411 +94,40 @@
     
     <main class="pt-20 py-6 mb-20">
         <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
-         
-
             <!-- Filter Section -->
             <div class="bg-white rounded-lg shadow mb-6 p-4">
-  <div class="flex flex-col md:flex-row md:items-center justify-between">
-    <h3 class="text-lg font-medium text-gray-800 mb-2 md:mb-0">
-      Filter Medical Records
-    </h3>
+                <div class="flex flex-col md:flex-row md:items-center justify-between">
+                    <h3 class="text-lg font-medium text-gray-800 mb-2 md:mb-0">
+                        Filter Medical Records
+                    </h3>
 
-    <!-- applied same technique: items-center + flex-nowrap + overflow-x-auto -->
-    <div class="flex items-center gap-2 flex-nowrap overflow-x-auto">
-      <select id="type-filter"
-        class="filter-option h-10 min-w-[7rem] px-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-medlightblue focus:border-medlightblue appearance-none">
-        <option value="all">All Types</option>
-        <option value="checkup">Check-up</option>
-        <option value="allergy">Allergy</option>
-        <option value="dental">Dental</option>
-        <option value="vaccination">Vaccination</option>
-      </select>
+                    <div class="flex items-center gap-2 flex-nowrap overflow-x-auto">
+                        <select id="type-filter" class="filter-option h-10 min-w-[7rem] px-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-medlightblue focus:border-medlightblue appearance-none">
+                            <option value="all">All Types</option>
+                            <option value="checkup">Check-up</option>
+                            <option value="allergy">Allergy</option>
+                            <option value="dental">Dental</option>
+                            <option value="vaccination">Vaccination</option>
+                        </select>
 
-      <select id="date-filter"
-        class="filter-option h-10 min-w-[6rem] px-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-medlightblue focus:border-medlightblue appearance-none">
-        <option value="all">Any Date</option>
-        <option value="month">Past Month</option>
-        <option value="3months">Past 3 Months</option>
-        <option value="year">Past Year</option>
-      </select>
+                        <select id="date-filter" class="filter-option h-10 min-w-[6rem] px-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-medlightblue focus:border-medlightblue appearance-none">
+                            <option value="all">Any Date</option>
+                            <option value="month">Past Month</option>
+                            <option value="3months">Past 3 Months</option>
+                            <option value="year">Past Year</option>
+                        </select>
 
-      <button id="clear-filters"
-        class="filter-option h-10 px-3 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-medlightblue whitespace-nowrap">
-        Reset All
-      </button>
-    </div>
-  </div>
-</div>
-
-
-
+                        <button id="clear-filters" class="filter-option h-10 px-3 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-medlightblue whitespace-nowrap">
+                            Reset All
+                        </button>
+                    </div>
+                </div>
+            </div>
 
             <!-- Medical History List -->
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                <!-- <div class="px-4 py-5 border-b border-gray-200 sm:px-6 flex justify-between items-center">
-                    <h3 class="text-lg leading-6 font-medium text-medblue"><i class="fas fa-history mr-2"></i> My Medical Records</h3>
-                  
-                </div> -->
-                
                 <div id="history-container">
-                    <!-- Medical Record 1 -->
-                    <div class="border-b border-gray-200 history-card" data-type="checkup" data-date="2023-10-18">
-                        <div class="px-4 py-4 sm:px-6 cursor-pointer" onclick="toggleRecordDetails(this)">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <p class="text-sm font-medium text-medblue truncate">General Check-up</p>
-                                   
-                                </div>
-                                <div class="flex items-center">
-                                    <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full  text-medblue">Oct 18, 2023</p>
-                                    <i class="fas fa-chevron-right ml-2 text-gray-400 transition-all" id="chevron-1"></i>
-                                </div>
-                            </div>
-                            <div class="mt-2 flex justify-between">
-                                <div class="flex items-center text-sm text-gray-500">
-                                    <i class="fas fa-user-md mr-1.5 text-gray-400"></i>
-                                    Sr. Thandi Nkosi, Registered Nurse
-                                </div>
-                               
-                            </div>
-                        </div>
-                        
-                        <!-- Expanded Details -->
-                        <div class="px-4 py-4 bg-gray-50 hidden details-content">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <h4 class="text-sm font-medium text-gray-700 mb-2">Appointment Details</h4>
-                                    <div class="space-y-2">
-                                        <div class="flex">
-                                            <div class="w-1/3 text-sm text-gray-500">Date & Time:</div>
-                                            <div class="w-2/3 text-sm font-medium">October 18, 2023 at 2:30 PM</div>
-                                        </div>
-                                        <div class="flex">
-                                            <div class="w-1/3 text-sm text-gray-500">Duration:</div>
-                                            <div class="w-2/3 text-sm font-medium">30 minutes</div>
-                                        </div>
-                                        <div class="flex">
-                                            <div class="w-1/3 text-sm text-gray-500">Purpose:</div>
-                                            <div class="w-2/3 text-sm font-medium">Routine health check-up</div>
-                                        </div>
-                                        <div class="flex">
-                                            <div class="w-1/3 text-sm text-gray-500">Location:</div>
-                                            <div class="w-2/3 text-sm font-medium">TUT Main Campus Clinic, Room 205</div>
-                                        </div>
-                                    </div>
-                                    
-                                    <h4 class="text-sm font-medium text-gray-700 mt-4 mb-2">Diagnosis</h4>
-                                    <div class="bg-blue-50 p-3 rounded-md">
-                                        <p class="text-sm text-gray-800">Healthy vitals, no issues detected. Recommended annual follow-up.</p>
-                                    </div>
-                                </div>
-                                
-                                <div>
-                                    <h4 class="text-sm font-medium text-gray-700 mb-2">Prescriptions & Treatment</h4>
-                                    <div class="bg-white border border-gray-200 rounded-md overflow-hidden">
-                                        <div class="bg-gray-50 px-3 py-2 border-b border-gray-200">
-                                            <p class="text-xs font-medium text-gray-700">No medications prescribed</p>
-                                        </div>
-                                        <div class="p-3">
-                                            <p class="text-xs text-gray-600">No pharmaceutical treatment was necessary for this visit.</p>
-                                        </div>
-                                    </div>
-                                    
-                                    <h4 class="text-sm font-medium text-gray-700 mt-4 mb-2">Medical Notes</h4>
-                                    <div class="bg-gray-50 p-3 rounded-md">
-                                        <ul class="text-sm text-gray-800 list-disc list-inside space-y-1">
-                                            <li>Blood pressure: 120/80 mmHg</li>
-                                            <li>Heart rate: 72 bpm</li>
-                                            <li>Temperature: 98.6°F (37°C)</li>
-                                            <li>Respiratory rate: 16 breaths/min</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Medical Record 2 -->
-                    <div class="border-b border-gray-200 history-card" data-type="allergy" data-date="2023-09-10">
-                        <div class="px-4 py-4 sm:px-6 cursor-pointer" onclick="toggleRecordDetails(this)">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <p class="text-sm font-medium text-medblue truncate">Allergy Consultation</p>
-                                   
-                                </div>
-                                <div class="flex items-center">
-                                    <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full text-medblue">Sept 10, 2023</p>
-                                    <i class="fas fa-chevron-right ml-2 text-gray-400 transition-all" id="chevron-2"></i>
-                                </div>
-                            </div>
-                            <div class="mt-2 flex justify-between">
-                                <div class="flex items-center text-sm text-gray-500">
-                                    <i class="fas fa-user-md mr-1.5 text-gray-400"></i>
-                                    Dr. James Khumalo, Allergy Specialist
-                                </div>
-                               
-                            </div>
-                        </div>
-                        
-                        <!-- Expanded Details -->
-                        <div class="px-4 py-4 bg-gray-50 hidden details-content">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <h4 class="text-sm font-medium text-gray-700 mb-2">Appointment Details</h4>
-                                    <div class="space-y-2">
-                                        <div class="flex">
-                                            <div class="w-1/3 text-sm text-gray-500">Date & Time:</div>
-                                            <div class="w-2/3 text-sm font-medium">September 10, 2023 at 10:00 AM</div>
-                                        </div>
-                                        <div class="flex">
-                                            <div class="w-1/3 text-sm text-gray-500">Duration:</div>
-                                            <div class="w-2/3 text-sm font-medium">45 minutes</div>
-                                        </div>
-                                        <div class="flex">
-                                            <div class="w-1/3 text-sm text-gray-500">Purpose:</div>
-                                            <div class="w-2/3 text-sm font-medium">Seasonal allergy assessment</div>
-                                        </div>
-                                        <div class="flex">
-                                            <div class="w-1/3 text-sm text-gray-500">Location:</div>
-                                            <div class="w-2/3 text-sm font-medium">TUT Main Campus Allergy Unit, Room 104</div>
-                                        </div>
-                                    </div>
-                                    
-                                    <h4 class="text-sm font-medium text-gray-700 mt-4 mb-2">Diagnosis</h4>
-                                    <div class="bg-blue-50 p-3 rounded-md">
-                                        <p class="text-sm text-gray-800">Seasonal allergic rhinitis (hay fever) triggered by grass pollen.</p>
-                                    </div>
-                                </div>
-                                
-                                <div>
-                                    <h4 class="text-sm font-medium text-gray-700 mb-2">Prescriptions</h4>
-                                    <div class="bg-white border border-gray-200 rounded-md overflow-hidden mb-3">
-                                        <div class="bg-gray-50 px-3 py-2 border-b border-gray-200 flex justify-between items-center">
-                                            <p class="text-xs font-medium text-gray-700">Loratadine</p>
-                                            <span class="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">Tablet</span>
-                                        </div>
-                                        <div class="p-3">
-                                            <div class="grid grid-cols-2 gap-2 mb-2">
-                                                <div class="text-xs text-gray-600">Dosage: <span class="font-medium">10mg</span></div>
-                                                <div class="text-xs text-gray-600">Frequency: <span class="font-medium">Once daily</span></div>
-                                                <div class="text-xs text-gray-600">Duration: <span class="font-medium">30 days</span></div>
-                                                <div class="text-xs text-gray-600">Quantity: <span class="font-medium">30 tablets</span></div>
-                                            </div>
-                                            <p class="text-xs text-gray-600 mt-1">Take one tablet daily during allergy season. May cause drowsiness.</p>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="bg-white border border-gray-200 rounded-md overflow-hidden">
-                                        <div class="bg-gray-50 px-3 py-2 border-b border-gray-200 flex justify-between items-center">
-                                            <p class="text-xs font-medium text-gray-700">Fluticasone Nasal Spray</p>
-                                            <span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">Spray</span>
-                                        </div>
-                                        <div class="p-3">
-                                            <div class="grid grid-cols-2 gap-2 mb-2">
-                                                <div class="text-xs text-gray-600">Dosage: <span class="font-medium">50mcg/spray</span></div>
-                                                <div class="text-xs text-gray-600">Frequency: <span class="font-medium">2 sprays per nostril daily</span></div>
-                                                <div class="text-xs text-gray-600">Duration: <span class="font-medium">As needed</span></div>
-                                                <div class="text-xs text-gray-600">Quantity: <span class="font-medium">1 bottle</span></div>
-                                            </div>
-                                            <p class="text-xs text-gray-600 mt-1">Use at first sign of nasal symptoms. Shake well before use.</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Medical Record 3 -->
-                    <div class="border-b border-gray-200 history-card" data-type="dental" data-date="2023-08-22">
-                        <div class="px-4 py-4 sm:px-6 cursor-pointer" onclick="toggleRecordDetails(this)">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <p class="text-sm font-medium text-medblue truncate">Dental Cleaning & Check-up</p>
-                                    
-                                </div>
-                                <div class="flex items-center">
-                                    <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full  text-medblue">Aug 22,2023</p>
-                                    <i class="fas fa-chevron-right ml-2 text-gray-400 transition-all" id="chevron-3"></i>
-                                </div>
-                            </div>
-                            <div class="mt-2 flex justify-between">
-                                <div class="flex items-center text-sm text-gray-500">
-                                    <i class="fas fa-user-md mr-1.5 text-gray-400"></i>
-                                    Dr. Sarah van der Merwe, Dental Surgeon
-                                </div>
-                               
-                            </div>
-                        </div>
-                        
-                        <!-- Expanded Details -->
-                        <div class="px-4 py-4 bg-gray-50 hidden details-content">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <h4 class="text-sm font-medium text-gray-700 mb-2">Appointment Details</h4>
-                                    <div class="space-y-2">
-                                        <div class="flex">
-                                            <div class="w-1/3 text-sm text-gray-500">Date & Time:</div>
-                                            <div class="w-2/3 text-sm font-medium">August 22, 2023 at 11:15 AM</div>
-                                        </div>
-                                        <div class="flex">
-                                            <div class="w-1/3 text-sm text-gray-500">Duration:</div>
-                                            <div class="w-2/3 text-sm font-medium">1 hour</div>
-                                        </div>
-                                        <div class="flex">
-                                            <div class="w-1/3 text-sm text-gray-500">Purpose:</div>
-                                            <div class="w-2/3 text-sm font-medium">Teeth cleaning and check-up</div>
-                                        </div>
-                                        <div class="flex">
-                                            <div class="w-1/3 text-sm text-gray-500">Location:</div>
-                                            <div class="w-2/3 text-sm font-medium">TUT Main Campus Dental Clinic, Room 312</div>
-                                        </div>
-                                    </div>
-                                    
-                                    <h4 class="text-sm font-medium text-gray-700 mt-4 mb-2">Diagnosis</h4>
-                                    <div class="bg-blue-50 p-3 rounded-md">
-                                        <p class="text-sm text-gray-800">Mild gingivitis with minimal plaque buildup. No cavities detected.</p>
-                                    </div>
-                                </div>
-                                
-                                <div>
-                                    <h4 class="text-sm font-medium text-gray-700 mb-2">Treatment & Recommendations</h4>
-                                    <div class="bg-white border border-gray-200 rounded-md overflow-hidden mb-3">
-                                        <div class="bg-gray-50 px-3 py-2 border-b border-gray-200">
-                                            <p class="text-xs font-medium text-gray-700">Professional Dental Cleaning</p>
-                                        </div>
-                                        <div class="p-3">
-                                            <p class="text-xs text-gray-600">Ultrasonic scaling and polishing performed. Minor bleeding observed during cleaning.</p>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="bg-white border border-gray-200 rounded-md overflow-hidden">
-                                        <div class="bg-gray-50 px-3 py-2 border-b border-gray-200 flex justify-between items-center">
-                                            <p class="text-xs font-medium text-gray-700">Fluoride Treatment</p>
-                                            <span class="px-2 py-1 text-xs font-medium bg-purple-100 text-purple-800 rounded-full">Gel</span>
-                                        </div>
-                                        <div class="p-3">
-                                            <div class="grid grid-cols-2 gap-2 mb-2">
-                                                <div class="text-xs text-gray-600">Type: <span class="font-medium">Fluoride varnish</span></div>
-                                                <div class="text-xs text-gray-600">Application: <span class="font-medium">Professional application</span></div>
-                                            </div>
-                                            <p class="text-xs text-gray-600 mt-1">Avoid eating or drinking for 30 minutes after application.</p>
-                                        </div>
-                                    </div>
-                                    
-                                    <h4 class="text-sm font-medium text-gray-700 mt-4 mb-2">Home Care Instructions</h4>
-                                    <div class="bg-gray-50 p-3 rounded-md">
-                                        <ul class="text-sm text-gray-800 list-disc list-inside space-y-1">
-                                            <li>Brush twice daily with fluoride toothpaste</li>
-                                            <li>Floss at least once daily</li>
-                                            <li>Use antiseptic mouthwash as directed</li>
-                                            <li>Schedule follow-up in 6 months</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Medical Record 4 -->
-                    <div class="border-b border-gray-200 history-card" data-type="vaccination" data-date="2023-07-15">
-                        <div class="px-4 py-4 sm:px-6 cursor-pointer" onclick="toggleRecordDetails(this)">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <p class="text-sm font-medium text-medblue truncate">Flu Vaccination</p>
-                                   
-                                </div>
-                                <div class="flex items-center">
-                                    <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full text-medblue">Jul 15, 2023</p>
-                                    <i class="fas fa-chevron-right ml-2 text-gray-400 transition-all" id="chevron-4"></i>
-                                </div>
-                            </div>
-                            <div class="mt-2 flex justify-between">
-                                <div class="flex items-center text-sm text-gray-500">
-                                    <i class="fas fa-user-md mr-1.5 text-gray-400"></i>
-                                    Sr. Linda Pretorius, Registered Nurse
-                                </div>
-                               
-                            </div>
-                        </div>
-                        
-                        <!-- Expanded Details -->
-                        <div class="px-4 py-4 bg-gray-50 hidden details-content">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <h4 class="text-sm font-medium text-gray-700 mb-2">Appointment Details</h4>
-                                    <div class="space-y-2">
-                                        <div class="flex">
-                                            <div class="w-1/3 text-sm text-gray-500">Date & Time:</div>
-                                            <div class="w-2/3 text-sm font-medium">July 15, 2023 at 9:00 AM</div>
-                                        </div>
-                                        <div class="flex">
-                                            <div class="w-1/3 text-sm text-gray-500">Duration:</div>
-                                            <div class="w-2/3 text-sm font-medium">15 minutes</div>
-                                        </div>
-                                        <div class="flex">
-                                            <div class="w-1/3 text-sm text-gray-500">Purpose:</div>
-                                            <div class="w-2/3 text-sm font-medium">Seasonal influenza vaccination</div>
-                                        </div>
-                                        <div class="flex">
-                                            <div class="w-1/3 text-sm text-gray-500">Location:</div>
-                                            <div class="w-2/3 text-sm font-medium">TUT Main Campus Clinic, Room 102</div>
-                                        </div>
-                                    </div>
-                                    
-                                    <h4 class="text-sm font-medium text-gray-700 mt-4 mb-2">Vaccine Information</h4>
-                                    <div class="bg-blue-50 p-3 rounded-md">
-                                        <div class="flex">
-                                            <div class="w-1/3 text-sm text-gray-500">Vaccine:</div>
-                                            <div class="w-2/3 text-sm font-medium">Influenza Quadrivalent Vaccine 2023-2024</div>
-                                        </div>
-                                        <div class="flex mt-2">
-                                            <div class="w-1/3 text-sm text-gray-500">Batch No:</div>
-                                            <div class="w-2/3 text-sm font-medium">FLU2347A</div>
-                                        </div>
-                                        <div class="flex mt-2">
-                                            <div class="w-1/3 text-sm text-gray-500">Administration:</div>
-                                            <div class="w-2/3 text-sm font-medium">Intramuscular (left deltoid)</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div>
-                                    <h4 class="text-sm font-medium text-gray-700 mb-2">Aftercare Instructions</h4>
-                                    <div class="bg-white border border-gray-200 rounded-md overflow-hidden mb-3">
-                                        <div class="bg-gray-50 px-3 py-2 border-b border-gray-200">
-                                            <p class="text-xs font-medium text-gray-700">Post-Vaccination Care</p>
-                                        </div>
-                                        <div class="p-3">
-                                            <p class="text-xs text-gray-600 mb-2">Common side effects may include:</p>
-                                            <ul class="text-xs text-gray-600 list-disc list-inside pl-2 space-y-1">
-                                                <li>Soreness, redness, or swelling at injection site</li>
-                                                <li>Low-grade fever</li>
-                                                <li>Muscle aches</li>
-                                                <li>Headache</li>
-                                            </ul>
-                                            <p class="text-xs text-gray-600 mt-2">These symptoms should resolve within 1-2 days.</p>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="bg-white border border-gray-200 rounded-md overflow-hidden">
-                                        <div class="bg-gray-50 px-3 py-2 border-b border-gray-200 flex justify-between items-center">
-                                            <p class="text-xs font-medium text-gray-700">Pain Relief</p>
-                                            <span class="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">Tablet</span>
-                                        </div>
-                                        <div class="p-3">
-                                            <div class="grid grid-cols-2 gap-2 mb-2">
-                                                <div class="text-xs text-gray-600">Medication: <span class="font-medium">Paracetamol</span></div>
-                                                <div class="text-xs text-gray-600">Dosage: <span class="font-medium">500mg</span></div>
-                                                <div class="text-xs text-gray-600">Frequency: <span class="font-medium">Every 4-6 hours as needed</span></div>
-                                                <div class="text-xs text-gray-600">Max: <span class="font-medium">4g per day</span></div>
-                                            </div>
-                                            <p class="text-xs text-gray-600 mt-1">Only if needed for fever or discomfort. Do not exceed maximum dosage.</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Records will be dynamically inserted here -->
                 </div>
 
                 <!-- No results message (hidden by default) -->
@@ -501,12 +136,30 @@
                     <h3 class="text-lg font-medium text-gray-700">No medical records found</h3>
                     <p class="text-gray-500 mt-1">Try adjusting your filters to see more results.</p>
                 </div>
+
+                <!-- Pagination Controls -->
+                <div id="pagination-controls" class="hidden px-4 py-4 border-t border-gray-200 flex justify-between items-center">
+                    <div class="text-sm text-gray-500" id="pagination-info">
+                        Showing 0-0 of 0 records
+                    </div>
+                    <div class="flex space-x-1">
+                        <button id="prev-page" class="pagination-btn px-3 py-1 rounded-md border border-gray-300 text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            Previous
+                        </button>
+                        <div id="page-numbers" class="flex space-x-1">
+                            <!-- Page numbers will be dynamically inserted here -->
+                        </div>
+                        <button id="next-page" class="pagination-btn px-3 py-1 rounded-md border border-gray-300 text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            Next
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
 
-      <!-- Bottom Navigation (Mobile Only) -->
-      <nav class="bottom-nav fixed bottom-0 w-full bg-white border-t border-gray-200 z-40 md:hidden">
+    <!-- Bottom Navigation (Mobile Only) -->
+    <nav class="bottom-nav fixed bottom-0 w-full bg-white border-t border-gray-200 z-40 md:hidden">
         <div class="grid grid-cols-4 gap-1 py-2">
             <a href="index.html" class="flex flex-col items-center justify-center p-2 text-gray-500 hover:text-medblue">
                 <i class="fas fa-home text-lg"></i>
@@ -528,6 +181,838 @@
     </nav>
 
     <script>
+        // Medical records data (would typically come from an API)
+       const medicalRecords = [
+    {
+        id: 1,
+        title: "General Check-up",
+        type: "checkup",
+        date: "2023-10-18",
+        practitioner: "Sr. Thandi Nkosi, Registered Nurse",
+        details: {
+            appointment: {
+                dateTime: "October 18, 2023 at 2:30 PM",
+                duration: "30 minutes",
+                purpose: "Routine health check-up",
+                location: "TUT Main Campus Clinic, Room 205"
+            },
+            diagnosis: "Healthy vitals, no issues detected. Recommended annual follow-up.",
+            prescriptions: [],
+            notes: [
+                "Blood pressure: 120/80 mmHg",
+                "Heart rate: 72 bpm",
+                "Temperature: 98.6°F (37°C)",
+                "Respiratory rate: 16 breaths/min"
+            ]
+        }
+    },
+    {
+        id: 2,
+        title: "Allergy Consultation",
+        type: "allergy",
+        date: "2023-09-10",
+        practitioner: "Dr. James Khumalo, Allergy Specialist",
+        details: {
+            appointment: {
+                dateTime: "September 10, 2023 at 10:00 AM",
+                duration: "45 minutes",
+                purpose: "Seasonal allergy assessment",
+                location: "TUT Main Campus Allergy Unit, Room 104"
+            },
+            diagnosis: "Seasonal allergic rhinitis (hay fever) triggered by grass pollen.",
+            prescriptions: [
+                {
+                    name: "Loratadine",
+                    type: "Tablet",
+                    dosage: "10mg",
+                    frequency: "Once daily",
+                    duration: "30 days",
+                    quantity: "30 tablets",
+                    instructions: "Take one tablet daily during allergy season. May cause drowsiness."
+                },
+                {
+                    name: "Fluticasone Nasal Spray",
+                    type: "Spray",
+                    dosage: "50mcg/spray",
+                    frequency: "2 sprays per nostril daily",
+                    duration: "As needed",
+                    quantity: "1 bottle",
+                    instructions: "Use at first sign of nasal symptoms. Shake well before use."
+                }
+            ],
+            notes: []
+        }
+    },
+    {
+        id: 3,
+        title: "Dental Cleaning & Check-up",
+        type: "dental",
+        date: "2023-08-22",
+        practitioner: "Dr. Sarah van der Merwe, Dental Surgeon",
+        details: {
+            appointment: {
+                dateTime: "August 22, 2023 at 11:15 AM",
+                duration: "1 hour",
+                purpose: "Teeth cleaning and check-up",
+                location: "TUT Main Campus Dental Clinic, Room 312"
+            },
+            diagnosis: "Mild gingivitis with minimal plaque buildup. No cavities detected.",
+            prescriptions: [
+                {
+                    name: "Professional Dental Cleaning",
+                    type: "Procedure",
+                    instructions: "Ultrasonic scaling and polishing performed. Minor bleeding observed during cleaning."
+                },
+                {
+                    name: "Fluoride Treatment",
+                    type: "Gel",
+                    dosage: "Professional application",
+                    instructions: "Avoid eating or drinking for 30 minutes after application."
+                }
+            ],
+            notes: [
+                "Brush twice daily with fluoride toothpaste",
+                "Floss at least once daily",
+                "Use antiseptic mouthwash as directed",
+                "Schedule follow-up in 6 months"
+            ]
+        }
+    },
+    {
+        id: 4,
+        title: "Flu Vaccination",
+        type: "vaccination",
+        date: "2023-07-15",
+        practitioner: "Sr. Linda Pretorius, Registered Nurse",
+        details: {
+            appointment: {
+                dateTime: "July 15, 2023 at 9:00 AM",
+                duration: "15 minutes",
+                purpose: "Seasonal influenza vaccination",
+                location: "TUT Main Campus Clinic, Room 102"
+            },
+            diagnosis: "",
+            prescriptions: [
+                {
+                    name: "Influenza Quadrivalent Vaccine 2023-2024",
+                    type: "Vaccine",
+                    batch: "FLU2347A",
+                    administration: "Intramuscular (left deltoid)",
+                    instructions: "Common side effects may include soreness, redness, or swelling at injection site."
+                },
+                {
+                    name: "Paracetamol",
+                    type: "Tablet",
+                    dosage: "500mg",
+                    frequency: "Every 4-6 hours as needed",
+                    max: "4g per day",
+                    instructions: "Only if needed for fever or discomfort. Do not exceed maximum dosage."
+                }
+            ],
+            notes: []
+        }
+    },
+    {
+        id: 5,
+        title: "Eye Examination",
+        type: "checkup",
+        date: "2023-06-05",
+        practitioner: "Dr. Michael Johnson, Ophthalmologist",
+        details: {
+            appointment: {
+                dateTime: "June 5, 2023 at 3:00 PM",
+                duration: "45 minutes",
+                purpose: "Annual eye examination",
+                location: "TUT Main Campus Eye Clinic, Room 108"
+            },
+            diagnosis: "Mild myopia with no significant changes from previous examination.",
+            prescriptions: [
+                {
+                    name: "Updated Eyeglass Prescription",
+                    type: "Prescription",
+                    instructions: "Right eye: -1.25, Left eye: -1.50. No astigmatism detected."
+                }
+            ],
+            notes: [
+                "Visual acuity: 20/20 with correction",
+                "Intraocular pressure: 15 mmHg (both eyes)",
+                "No signs of cataracts or glaucoma",
+                "Recommended follow-up in 12 months"
+            ]
+        }
+    },
+    {
+        id: 6,
+        title: "Sports Physical",
+        type: "checkup",
+        date: "2023-05-12",
+        practitioner: "Dr. Robert Williams, Sports Medicine",
+        details: {
+            appointment: {
+                dateTime: "May 12, 2023 at 10:30 AM",
+                duration: "40 minutes",
+                purpose: "Pre-participation sports physical",
+                location: "TUT Main Campus Sports Clinic, Room 210"
+            },
+            diagnosis: "Cleared for all sports activities without restrictions.",
+            prescriptions: [],
+            notes: [
+                "Height: 5'10\", Weight: 160 lbs",
+                "Blood pressure: 118/76 mmHg",
+                "Heart rate: 68 bpm",
+                "Musculoskeletal exam: Normal",
+                "Cardiovascular exam: Normal"
+            ]
+        }
+    },
+    {
+        id: 7,
+        title: "Dermatology Consultation",
+        type: "dermatology",
+        date: "2023-04-08",
+        practitioner: "Dr. Lerato Molefe, Dermatologist",
+        details: {
+            appointment: {
+                dateTime: "April 8, 2023 at 2:00 PM",
+                duration: "30 minutes",
+                purpose: "Skin rash evaluation",
+                location: "TUT Dermatology Unit, Room 115"
+            },
+            diagnosis: "Mild eczema on forearms.",
+            prescriptions: [
+                {
+                    name: "Hydrocortisone Cream",
+                    type: "Topical",
+                    dosage: "Apply thin layer",
+                    frequency: "Twice daily",
+                    duration: "14 days",
+                    instructions: "Do not apply on broken skin."
+                }
+            ],
+            notes: [
+                "Avoid harsh soaps",
+                "Use moisturizers frequently",
+                "Follow up if rash worsens"
+            ]
+        }
+    },
+    {
+        id: 8,
+        title: "Chest X-Ray",
+        type: "radiology",
+        date: "2023-03-15",
+        practitioner: "Radiology Department",
+        details: {
+            appointment: {
+                dateTime: "March 15, 2023 at 11:00 AM",
+                duration: "20 minutes",
+                purpose: "Persistent cough evaluation",
+                location: "TUT Radiology Unit, Room 220"
+            },
+            diagnosis: "Clear lungs. No pneumonia detected.",
+            prescriptions: [],
+            notes: ["Advise follow-up if cough persists beyond 2 weeks"]
+        }
+    },
+    {
+        id: 9,
+        title: "Blood Test Panel",
+        type: "lab",
+        date: "2023-02-10",
+        practitioner: "Pathology Lab",
+        details: {
+            appointment: {
+                dateTime: "February 10, 2023 at 9:30 AM",
+                duration: "15 minutes",
+                purpose: "Routine blood work",
+                location: "TUT Pathology Lab, Room 130"
+            },
+            diagnosis: "Normal complete blood count. Slightly low Vitamin D.",
+            prescriptions: [
+                {
+                    name: "Vitamin D Supplement",
+                    type: "Tablet",
+                    dosage: "1000 IU",
+                    frequency: "Once daily",
+                    duration: "90 days"
+                }
+            ],
+            notes: []
+        }
+    },
+    {
+        id: 10,
+        title: "Physiotherapy Session",
+        type: "physiotherapy",
+        date: "2023-01-12",
+        practitioner: "Ms. Nomsa Dlamini, Physiotherapist",
+        details: {
+            appointment: {
+                dateTime: "January 12, 2023 at 1:00 PM",
+                duration: "1 hour",
+                purpose: "Knee injury rehabilitation",
+                location: "TUT Sports Clinic, Room 215"
+            },
+            diagnosis: "Recovering well post ligament sprain.",
+            prescriptions: [
+                {
+                    name: "Physio Exercises",
+                    type: "Exercise Plan",
+                    instructions: "Daily stretching and strengthening exercises provided."
+                }
+            ],
+            notes: ["Patient reports mild discomfort", "Continue home exercises"]
+        }
+    },
+    {
+        id: 11,
+        title: "Nutrition Consultation",
+        type: "nutrition",
+        date: "2022-12-01",
+        practitioner: "Dr. Ayesha Patel, Dietitian",
+        details: {
+            appointment: {
+                dateTime: "December 1, 2022 at 3:30 PM",
+                duration: "45 minutes",
+                purpose: "Weight management program",
+                location: "TUT Wellness Center, Room 120"
+            },
+            diagnosis: "BMI slightly above normal range.",
+            prescriptions: [
+                {
+                    name: "Personalized Diet Plan",
+                    type: "Plan",
+                    instructions: "Balanced diet with reduced processed sugar and increased fiber intake."
+                }
+            ],
+            notes: ["Encouraged to exercise 3 times per week"]
+        }
+    },
+    {
+        id: 12,
+        title: "Mental Health Counseling",
+        type: "counseling",
+        date: "2022-11-20",
+        practitioner: "Dr. Sipho Ndlovu, Psychologist",
+        details: {
+            appointment: {
+                dateTime: "November 20, 2022 at 2:00 PM",
+                duration: "1 hour",
+                purpose: "Anxiety management",
+                location: "TUT Counseling Center, Room 202"
+            },
+            diagnosis: "Generalized Anxiety Disorder (GAD)",
+            prescriptions: [
+                {
+                    name: "Cognitive Behavioral Therapy",
+                    type: "Therapy",
+                    instructions: "Weekly sessions for 8 weeks"
+                }
+            ],
+            notes: ["Recommended mindfulness practices", "Track anxiety triggers"]
+        }
+    },
+    {
+        id: 13,
+        title: "ENT Consultation",
+        type: "ent",
+        date: "2022-10-10",
+        practitioner: "Dr. Johan Botha, ENT Specialist",
+        details: {
+            appointment: {
+                dateTime: "October 10, 2022 at 10:45 AM",
+                duration: "30 minutes",
+                purpose: "Recurring sore throat",
+                location: "TUT ENT Unit, Room 118"
+            },
+            diagnosis: "Mild tonsillitis",
+            prescriptions: [
+                {
+                    name: "Amoxicillin",
+                    type: "Capsule",
+                    dosage: "500mg",
+                    frequency: "3 times daily",
+                    duration: "7 days"
+                }
+            ],
+            notes: ["Warm salt water gargles recommended"]
+        }
+    },
+    {
+        id: 14,
+        title: "Orthopedic Follow-up",
+        type: "orthopedic",
+        date: "2022-09-05",
+        practitioner: "Dr. Karen Smith, Orthopedic Surgeon",
+        details: {
+            appointment: {
+                dateTime: "September 5, 2022 at 1:30 PM",
+                duration: "30 minutes",
+                purpose: "Fracture recovery check",
+                location: "TUT Orthopedics, Room 303"
+            },
+            diagnosis: "Bone healed successfully",
+            prescriptions: [],
+            notes: ["Cleared for normal activities"]
+        }
+    },
+    {
+        id: 15,
+        title: "Cardiology Check-up",
+        type: "cardiology",
+        date: "2022-08-12",
+        practitioner: "Dr. Emily Mokoena, Cardiologist",
+        details: {
+            appointment: {
+                dateTime: "August 12, 2022 at 9:00 AM",
+                duration: "45 minutes",
+                purpose: "Routine heart check",
+                location: "TUT Cardiology Unit, Room 330"
+            },
+            diagnosis: "Normal ECG. Slightly elevated cholesterol.",
+            prescriptions: [
+                {
+                    name: "Atorvastatin",
+                    type: "Tablet",
+                    dosage: "10mg",
+                    frequency: "Once daily",
+                    duration: "3 months"
+                }
+            ],
+            notes: ["Advised dietary changes"]
+        }
+    },
+    {
+        id: 16,
+        title: "COVID-19 PCR Test",
+        type: "lab",
+        date: "2022-07-15",
+        practitioner: "Pathology Lab",
+        details: {
+            appointment: {
+                dateTime: "July 15, 2022 at 8:30 AM",
+                duration: "10 minutes",
+                purpose: "COVID-19 testing",
+                location: "TUT Clinic Testing Center"
+            },
+            diagnosis: "Negative result",
+            prescriptions: [],
+            notes: ["No isolation required"]
+        }
+    },
+    {
+        id: 17,
+        title: "Hearing Test",
+        type: "audiology",
+        date: "2022-06-20",
+        practitioner: "Ms. Zanele Khoza, Audiologist",
+        details: {
+            appointment: {
+                dateTime: "June 20, 2022 at 2:00 PM",
+                duration: "40 minutes",
+                purpose: "Annual hearing assessment",
+                location: "TUT Audiology Unit, Room 145"
+            },
+            diagnosis: "Normal hearing thresholds",
+            prescriptions: [],
+            notes: ["No follow-up required"]
+        }
+    },
+    {
+        id: 18,
+        title: "Gynecology Consultation",
+        type: "gynecology",
+        date: "2022-05-30",
+        practitioner: "Dr. Amanda Zungu, Gynecologist",
+        details: {
+            appointment: {
+                dateTime: "May 30, 2022 at 11:00 AM",
+                duration: "1 hour",
+                purpose: "Routine Pap smear",
+                location: "TUT Women's Health Unit, Room 125"
+            },
+            diagnosis: "Normal Pap smear results",
+            prescriptions: [],
+            notes: ["Annual screening advised"]
+        }
+    },
+    {
+        id: 19,
+        title: "Neurology Consultation",
+        type: "neurology",
+        date: "2022-04-25",
+        practitioner: "Dr. Themba Nkuna, Neurologist",
+        details: {
+            appointment: {
+                dateTime: "April 25, 2022 at 10:00 AM",
+                duration: "1 hour",
+                purpose: "Migraine assessment",
+                location: "TUT Neurology Unit, Room 402"
+            },
+            diagnosis: "Migraine headaches",
+            prescriptions: [
+                {
+                    name: "Sumatriptan",
+                    type: "Tablet",
+                    dosage: "50mg",
+                    frequency: "As needed for migraine attack"
+                }
+            ],
+            notes: ["Keep headache diary"]
+        }
+    },
+    {
+        id: 20,
+        title: "Post-Surgery Follow-up",
+        type: "surgery",
+        date: "2022-03-10",
+        practitioner: "Dr. Peter Mahlangu, General Surgeon",
+        details: {
+            appointment: {
+                dateTime: "March 10, 2022 at 12:00 PM",
+                duration: "30 minutes",
+                purpose: "Appendectomy recovery",
+                location: "TUT Surgery Department, Room 310"
+            },
+            diagnosis: "Incision healing well, no infection",
+            prescriptions: [
+                {
+                    name: "Ibuprofen",
+                    type: "Tablet",
+                    dosage: "400mg",
+                    frequency: "Every 6 hours as needed"
+                }
+            ],
+            notes: ["Avoid heavy lifting for 2 weeks"]
+        }
+    }
+];
+
+
+        // Pagination variables
+        let currentPage = 1;
+        const recordsPerPage = 3;
+        let filteredRecords = [...medicalRecords];
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderRecords();
+            setupEventListeners();
+        });
+
+        // Set up event listeners for filters and pagination
+        function setupEventListeners() {
+            const typeFilter = document.getElementById('type-filter');
+            const dateFilter = document.getElementById('date-filter');
+            const clearFiltersBtn = document.getElementById('clear-filters');
+            const prevPageBtn = document.getElementById('prev-page');
+            const nextPageBtn = document.getElementById('next-page');
+
+            typeFilter.addEventListener('change', filterAndRenderRecords);
+            dateFilter.addEventListener('change', filterAndRenderRecords);
+            clearFiltersBtn.addEventListener('click', clearFilters);
+            prevPageBtn.addEventListener('click', goToPrevPage);
+            nextPageBtn.addEventListener('click', goToNextPage);
+        }
+
+        // Filter records and re-render
+        function filterAndRenderRecords() {
+            const typeValue = document.getElementById('type-filter').value;
+            const dateValue = document.getElementById('date-filter').value;
+            
+            filterRecords(typeValue, dateValue);
+            currentPage = 1; // Reset to first page when filters change
+            renderRecords();
+        }
+
+        // Filter records based on type and date
+        function filterRecords(typeValue, dateValue) {
+            filteredRecords = medicalRecords.filter(record => {
+                const typeMatch = typeValue === 'all' || record.type === typeValue;
+                const dateMatch = dateValue === 'all' || isDateInRange(record.date, dateValue);
+                
+                return typeMatch && dateMatch;
+            });
+        }
+
+        // Check if date is within specified range
+        function isDateInRange(dateString, range) {
+            const recordDate = new Date(dateString);
+            const today = new Date();
+            
+            switch(range) {
+                case 'month':
+                    const pastMonth = new Date();
+                    pastMonth.setMonth(today.getMonth() - 1);
+                    return recordDate >= pastMonth && recordDate <= today;
+                case '3months':
+                    const past3Months = new Date();
+                    past3Months.setMonth(today.getMonth() - 3);
+                    return recordDate >= past3Months && recordDate <= today;
+                case 'year':
+                    const pastYear = new Date();
+                    pastYear.setFullYear(today.getFullYear() - 1);
+                    return recordDate >= pastYear && recordDate <= today;
+                default:
+                    return true;
+            }
+        }
+
+        // Clear all filters
+        function clearFilters() {
+            document.getElementById('type-filter').value = 'all';
+            document.getElementById('date-filter').value = 'all';
+            filterAndRenderRecords();
+        }
+
+        // Render records for current page
+        function renderRecords() {
+            const historyContainer = document.getElementById('history-container');
+            const noResultsMessage = document.getElementById('no-results');
+            const paginationControls = document.getElementById('pagination-controls');
+            
+            // Calculate pagination values
+            const totalPages = Math.ceil(filteredRecords.length / recordsPerPage);
+            const startIndex = (currentPage - 1) * recordsPerPage;
+            const endIndex = Math.min(startIndex + recordsPerPage, filteredRecords.length);
+            const currentRecords = filteredRecords.slice(startIndex, endIndex);
+            
+            // Clear container
+            historyContainer.innerHTML = '';
+            
+            // Show/hide no results message
+            if (filteredRecords.length === 0) {
+                noResultsMessage.classList.remove('hidden');
+                paginationControls.classList.add('hidden');
+                return;
+            } else {
+                noResultsMessage.classList.add('hidden');
+                paginationControls.classList.remove('hidden');
+            }
+            
+            // Render current page records
+            currentRecords.forEach(record => {
+                const recordElement = createRecordElement(record);
+                historyContainer.appendChild(recordElement);
+            });
+            
+            // Update pagination controls
+            updatePaginationControls(totalPages, startIndex, endIndex);
+        }
+
+        // Create HTML element for a medical record
+        function createRecordElement(record) {
+            const recordDiv = document.createElement('div');
+            recordDiv.className = 'border-b border-gray-200 history-card';
+            recordDiv.setAttribute('data-type', record.type);
+            recordDiv.setAttribute('data-date', record.date);
+            
+            // Format date for display
+            const displayDate = new Date(record.date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+            
+            recordDiv.innerHTML = `
+                <div class="px-4 py-4 sm:px-6 cursor-pointer" onclick="toggleRecordDetails(this)">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <p class="text-sm font-medium text-medblue truncate">${record.title}</p>
+                        </div>
+                        <div class="flex items-center">
+                            <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full text-medblue">${displayDate}</p>
+                            <i class="fas fa-chevron-right ml-2 text-gray-400 transition-all"></i>
+                        </div>
+                    </div>
+                    <div class="mt-2 flex justify-between">
+                        <div class="flex items-center text-sm text-gray-500">
+                            <i class="fas fa-user-md mr-1.5 text-gray-400"></i>
+                            ${record.practitioner}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Expanded Details -->
+                <div class="px-4 py-4 bg-gray-50 hidden details-content">
+                    ${createRecordDetails(record.details)}
+                    
+                    <!-- Download buttons -->
+                    <div class="mt-6 flex flex-wrap gap-2">
+                        <button onclick="downloadPrescription(${record.id})" class="flex items-center gap-2 px-4 py-2 bg-medgreen text-white rounded-md hover:bg-green-600 transition-colors text-sm">
+                            <i class="fas fa-prescription"></i>
+                            Download Prescription
+                        </button>
+                        <button onclick="downloadFullRecord(${record.id})" class="flex items-center gap-2 px-4 py-2 bg-medblue text-white rounded-md hover:bg-blue-600 transition-colors text-sm">
+                            <i class="fas fa-file-pdf"></i>
+                            Download Full Record
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            return recordDiv;
+        }
+
+        // Create HTML for record details
+        function createRecordDetails(details) {
+            return `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="text-sm font-medium text-gray-700 mb-2">Appointment Details</h4>
+                        <div class="space-y-2">
+                            <div class="flex">
+                                <div class="w-1/3 text-sm text-gray-500">Date & Time:</div>
+                                <div class="w-2/3 text-sm font-medium">${details.appointment.dateTime}</div>
+                            </div>
+                            <div class="flex">
+                                <div class="w-1/3 text-sm text-gray-500">Duration:</div>
+                                <div class="w-2/3 text-sm font-medium">${details.appointment.duration}</div>
+                            </div>
+                            <div class="flex">
+                                <div class="w-1/3 text-sm text-gray-500">Purpose:</div>
+                                <div class="w-2/3 text-sm font-medium">${details.appointment.purpose}</div>
+                            </div>
+                            <div class="flex">
+                                <div class="w-1/3 text-sm text-gray-500">Location:</div>
+                                <div class="w-2/3 text-sm font-medium">${details.appointment.location}</div>
+                            </div>
+                        </div>
+                        
+                        ${details.diagnosis ? `
+                            <h4 class="text-sm font-medium text-gray-700 mt-4 mb-2">Diagnosis</h4>
+                            <div class="bg-blue-50 p-3 rounded-md">
+                                <p class="text-sm text-gray-800">${details.diagnosis}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div>
+                        ${details.prescriptions.length > 0 ? `
+                            <h4 class="text-sm font-medium text-gray-700 mb-2">Prescriptions & Treatment</h4>
+                            ${details.prescriptions.map(prescription => createPrescriptionElement(prescription)).join('')}
+                        ` : `
+                            <h4 class="text-sm font-medium text-gray-700 mb-2">Prescriptions & Treatment</h4>
+                            <div class="bg-white border border-gray-200 rounded-md overflow-hidden">
+                                <div class="bg-gray-50 px-3 py-2 border-b border-gray-200">
+                                    <p class="text-xs font-medium text-gray-700">No medications prescribed</p>
+                                </div>
+                                <div class="p-3">
+                                    <p class="text-xs text-gray-600">No pharmaceutical treatment was necessary for this visit.</p>
+                                </div>
+                            </div>
+                        `}
+                        
+                        ${details.notes.length > 0 ? `
+                            <h4 class="text-sm font-medium text-gray-700 mt-4 mb-2">Medical Notes</h4>
+                            <div class="bg-gray-50 p-3 rounded-md">
+                                <ul class="text-sm text-gray-800 list-disc list-inside space-y-1">
+                                    ${details.notes.map(note => `<li>${note}</li>`).join('')}
+                                </ul>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Create HTML for a prescription
+        function createPrescriptionElement(prescription) {
+            const typeClass = getTypeClass(prescription.type);
+            
+            return `
+                <div class="bg-white border border-gray-200 rounded-md overflow-hidden mb-3">
+                    <div class="bg-gray-50 px-3 py-2 border-b border-gray-200 flex justify-between items-center">
+                        <p class="text-xs font-medium text-gray-700">${prescription.name}</p>
+                        <span class="px-2 py-1 text-xs font-medium ${typeClass.bg} ${typeClass.text} rounded-full">${prescription.type}</span>
+                    </div>
+                    <div class="p-3">
+                        ${prescription.dosage || prescription.frequency || prescription.duration || prescription.quantity || prescription.batch || prescription.administration ? `
+                            <div class="grid grid-cols-2 gap-2 mb-2">
+                                ${prescription.dosage ? `<div class="text-xs text-gray-600">Dosage: <span class="font-medium">${prescription.dosage}</span></div>` : ''}
+                                ${prescription.frequency ? `<div class="text-xs text-gray-600">Frequency: <span class="font-medium">${prescription.frequency}</span></div>` : ''}
+                                ${prescription.duration ? `<div class="text-xs text-gray-600">Duration: <span class="font-medium">${prescription.duration}</span></div>` : ''}
+                                ${prescription.quantity ? `<div class="text-xs text-gray-600">Quantity: <span class="font-medium">${prescription.quantity}</span></div>` : ''}
+                                ${prescription.batch ? `<div class="text-xs text-gray-600">Batch No: <span class="font-medium">${prescription.batch}</span></div>` : ''}
+                                ${prescription.administration ? `<div class="text-xs text-gray-600">Administration: <span class="font-medium">${prescription.administration}</span></div>` : ''}
+                                ${prescription.max ? `<div class="text-xs text-gray-600">Max: <span class="font-medium">${prescription.max}</span></div>` : ''}
+                            </div>
+                        ` : ''}
+                        <p class="text-xs text-gray-600 mt-1">${prescription.instructions}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Get CSS classes for prescription type
+        function getTypeClass(type) {
+            switch(type.toLowerCase()) {
+                case 'tablet':
+                    return { bg: 'bg-blue-100', text: 'text-blue-800' };
+                case 'spray':
+                    return { bg: 'bg-green-100', text: 'text-green-800' };
+                case 'gel':
+                    return { bg: 'bg-purple-100', text: 'text-purple-800' };
+                case 'vaccine':
+                    return { bg: 'bg-yellow-100', text: 'text-yellow-800' };
+                default:
+                    return { bg: 'bg-gray-100', text: 'text-gray-800' };
+            }
+        }
+
+        // Update pagination controls
+        function updatePaginationControls(totalPages, startIndex, endIndex) {
+            const paginationInfo = document.getElementById('pagination-info');
+            const pageNumbers = document.getElementById('page-numbers');
+            const prevPageBtn = document.getElementById('prev-page');
+            const nextPageBtn = document.getElementById('next-page');
+            
+            // Update pagination info
+            paginationInfo.textContent = `Showing ${startIndex + 1}-${endIndex} of ${filteredRecords.length} records`;
+            
+            // Update page numbers
+            pageNumbers.innerHTML = '';
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+            
+            if (endPage - startPage + 1 < maxVisiblePages) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `pagination-btn px-3 py-1 rounded-md border border-gray-300 text-sm hover:bg-gray-50 ${i === currentPage ? 'active' : ''}`;
+                pageBtn.textContent = i;
+                pageBtn.addEventListener('click', () => {
+                    currentPage = i;
+                    renderRecords();
+                });
+                pageNumbers.appendChild(pageBtn);
+            }
+            
+            // Update prev/next buttons
+            prevPageBtn.disabled = currentPage === 1;
+            nextPageBtn.disabled = currentPage === totalPages;
+        }
+
+        // Navigate to previous page
+        function goToPrevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderRecords();
+            }
+        }
+
+        // Navigate to next page
+        function goToNextPage() {
+            const totalPages = Math.ceil(filteredRecords.length / recordsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderRecords();
+            }
+        }
+
         // Toggle medical record details
         function toggleRecordDetails(element) {
             const detailsContent = element.nextElementSibling;
@@ -555,84 +1040,237 @@
                 }
             });
         }
-        
-        // Filter functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const typeFilter = document.getElementById('type-filter');
-            const dateFilter = document.getElementById('date-filter');
-            const clearFiltersBtn = document.getElementById('clear-filters');
-            const records = document.querySelectorAll('.history-card');
-            const noResultsMessage = document.getElementById('no-results');
-            const recordCount = document.getElementById('record-count');
+
+        // Download prescription as PDF
+        function downloadPrescription(recordId) {
+            const record = medicalRecords.find(r => r.id === recordId);
+            if (!record) return;
             
-            // Add event listeners to filters
-            typeFilter.addEventListener('change', filterRecords);
-            dateFilter.addEventListener('change', filterRecords);
-            clearFiltersBtn.addEventListener('click', clearFilters);
+            // Create a new PDF document
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
             
-            function filterRecords() {
-                const typeValue = typeFilter.value;
-                const dateValue = dateFilter.value;
+            // Add header
+            doc.setFontSize(20);
+            doc.setTextColor(30, 64, 175); // medblue
+            doc.text('MEDICAL PRESCRIPTION', 105, 20, { align: 'center' });
+            
+            // Add patient info
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Patient: Student`, 20, 40);
+            doc.text(`Date: ${new Date(record.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, 20, 50);
+            doc.text(`Practitioner: ${record.practitioner}`, 20, 60);
+            
+            // Add diagnosis if available
+            if (record.details.diagnosis) {
+                doc.text(`Diagnosis: ${record.details.diagnosis}`, 20, 75);
+            }
+            
+            // Add prescriptions
+            let yPosition = 90;
+            if (record.details.prescriptions.length > 0) {
+                doc.setFontSize(14);
+                doc.setTextColor(30, 64, 175);
+                doc.text('PRESCRIPTION DETAILS', 20, yPosition);
+                yPosition += 10;
                 
-                let visibleCount = 0;
+                doc.setFontSize(10);
+                doc.setTextColor(0, 0, 0);
                 
-                records.forEach(record => {
-                    const type = record.getAttribute('data-type');
-                    const date = record.getAttribute('data-date');
-                    
-                    const typeMatch = typeValue === 'all' || type === typeValue;
-                    const dateMatch = dateValue === 'all' || isDateInRange(date, dateValue);
-                    
-                    if (typeMatch && dateMatch) {
-                        record.classList.remove('hidden');
-                        visibleCount++;
-                    } else {
-                        record.classList.add('hidden');
+                record.details.prescriptions.forEach(prescription => {
+                    if (yPosition > 250) {
+                        doc.addPage();
+                        yPosition = 20;
                     }
+                    
+                    doc.setFont(undefined, 'bold');
+                    doc.text(`${prescription.name} (${prescription.type})`, 20, yPosition);
+                    yPosition += 7;
+                    
+                    doc.setFont(undefined, 'normal');
+                    if (prescription.dosage) {
+                        doc.text(`Dosage: ${prescription.dosage}`, 25, yPosition);
+                        yPosition += 5;
+                    }
+                    if (prescription.frequency) {
+                        doc.text(`Frequency: ${prescription.frequency}`, 25, yPosition);
+                        yPosition += 5;
+                    }
+                    if (prescription.duration) {
+                        doc.text(`Duration: ${prescription.duration}`, 25, yPosition);
+                        yPosition += 5;
+                    }
+                    if (prescription.quantity) {
+                        doc.text(`Quantity: ${prescription.quantity}`, 25, yPosition);
+                        yPosition += 5;
+                    }
+                    if (prescription.batch) {
+                        doc.text(`Batch No: ${prescription.batch}`, 25, yPosition);
+                        yPosition += 5;
+                    }
+                    
+                    doc.text(`Instructions: ${prescription.instructions}`, 25, yPosition);
+                    yPosition += 10;
                 });
+            } else {
+                doc.text('No prescriptions for this visit.', 20, yPosition);
+            }
+            
+            // Add footer
+            doc.setFontSize(8);
+            doc.setTextColor(100, 100, 100);
+            doc.text('Generated by TUT Health Portal', 105, 280, { align: 'center' });
+            
+            // Save the PDF
+            doc.save(`Prescription_${record.title.replace(/\s+/g, '_')}_${record.date}.pdf`);
+        }
+
+        // Download full medical record as PDF
+        function downloadFullRecord(recordId) {
+            const record = medicalRecords.find(r => r.id === recordId);
+            if (!record) return;
+            
+            // Create a new PDF document
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Add header
+            doc.setFontSize(20);
+            doc.setTextColor(30, 64, 175); // medblue
+            doc.text('MEDICAL RECORD', 105, 20, { align: 'center' });
+            
+            // Add patient info
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Patient: Student`, 20, 40);
+            doc.text(`Date: ${new Date(record.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, 20, 50);
+            doc.text(`Practitioner: ${record.practitioner}`, 20, 60);
+            doc.text(`Visit Type: ${record.title}`, 20, 70);
+            
+            // Add appointment details
+            let yPosition = 85;
+            doc.setFontSize(14);
+            doc.setTextColor(30, 64, 175);
+            doc.text('APPOINTMENT DETAILS', 20, yPosition);
+            yPosition += 10;
+            
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Date & Time: ${record.details.appointment.dateTime}`, 25, yPosition);
+            yPosition += 5;
+            doc.text(`Duration: ${record.details.appointment.duration}`, 25, yPosition);
+            yPosition += 5;
+            doc.text(`Purpose: ${record.details.appointment.purpose}`, 25, yPosition);
+            yPosition += 5;
+            doc.text(`Location: ${record.details.appointment.location}`, 25, yPosition);
+            yPosition += 10;
+            
+            // Add diagnosis if available
+            if (record.details.diagnosis) {
+                doc.setFontSize(14);
+                doc.setTextColor(30, 64, 175);
+                doc.text('DIAGNOSIS', 20, yPosition);
+                yPosition += 10;
                 
-                // Show/hide no results message
-                if (visibleCount === 0) {
-                    noResultsMessage.classList.remove('hidden');
-                } else {
-                    noResultsMessage.classList.add('hidden');
+                doc.setFontSize(10);
+                doc.setTextColor(0, 0, 0);
+                const diagnosisLines = doc.splitTextToSize(record.details.diagnosis, 160);
+                doc.text(diagnosisLines, 25, yPosition);
+                yPosition += diagnosisLines.length * 5 + 5;
+            }
+            
+            // Add prescriptions
+            if (record.details.prescriptions.length > 0) {
+                if (yPosition > 200) {
+                    doc.addPage();
+                    yPosition = 20;
                 }
                 
-                // Update record count text
-                recordCount.textContent = `Showing ${visibleCount} record${visibleCount !== 1 ? 's' : ''}`;
-            }
-            
-            function isDateInRange(dateString, range) {
-                const recordDate = new Date(dateString);
-                const today = new Date();
+                doc.setFontSize(14);
+                doc.setTextColor(30, 64, 175);
+                doc.text('PRESCRIPTIONS & TREATMENT', 20, yPosition);
+                yPosition += 10;
                 
-                switch(range) {
-                    case 'month':
-                        const pastMonth = new Date();
-                        pastMonth.setMonth(today.getMonth() - 1);
-                        return recordDate >= pastMonth && recordDate <= today;
-                    case '3months':
-                        const past3Months = new Date();
-                        past3Months.setMonth(today.getMonth() - 3);
-                        return recordDate >= past3Months && recordDate <= today;
-                    case 'year':
-                        const pastYear = new Date();
-                        pastYear.setFullYear(today.getFullYear() - 1);
-                        return recordDate >= pastYear && recordDate <= today;
-                    default:
-                        return true;
+                doc.setFontSize(10);
+                doc.setTextColor(0, 0, 0);
+                
+                record.details.prescriptions.forEach(prescription => {
+                    if (yPosition > 250) {
+                        doc.addPage();
+                        yPosition = 20;
+                    }
+                    
+                    doc.setFont(undefined, 'bold');
+                    doc.text(`${prescription.name} (${prescription.type})`, 25, yPosition);
+                    yPosition += 7;
+                    
+                    doc.setFont(undefined, 'normal');
+                    if (prescription.dosage) {
+                        doc.text(`Dosage: ${prescription.dosage}`, 30, yPosition);
+                        yPosition += 5;
+                    }
+                    if (prescription.frequency) {
+                        doc.text(`Frequency: ${prescription.frequency}`, 30, yPosition);
+                        yPosition += 5;
+                    }
+                    if (prescription.duration) {
+                        doc.text(`Duration: ${prescription.duration}`, 30, yPosition);
+                        yPosition += 5;
+                    }
+                    if (prescription.quantity) {
+                        doc.text(`Quantity: ${prescription.quantity}`, 30, yPosition);
+                        yPosition += 5;
+                    }
+                    if (prescription.batch) {
+                        doc.text(`Batch No: ${prescription.batch}`, 30, yPosition);
+                        yPosition += 5;
+                    }
+                    if (prescription.administration) {
+                        doc.text(`Administration: ${prescription.administration}`, 30, yPosition);
+                        yPosition += 5;
+                    }
+                    
+                    const instructionLines = doc.splitTextToSize(`Instructions: ${prescription.instructions}`, 150);
+                    doc.text(instructionLines, 30, yPosition);
+                    yPosition += instructionLines.length * 5 + 5;
+                });
+            }
+            
+            // Add medical notes if available
+            if (record.details.notes.length > 0) {
+                if (yPosition > 220) {
+                    doc.addPage();
+                    yPosition = 20;
                 }
+                
+                doc.setFontSize(14);
+                doc.setTextColor(30, 64, 175);
+                doc.text('MEDICAL NOTES', 20, yPosition);
+                yPosition += 10;
+                
+                doc.setFontSize(10);
+                doc.setTextColor(0, 0, 0);
+                
+                record.details.notes.forEach(note => {
+                    if (yPosition > 270) {
+                        doc.addPage();
+                        yPosition = 20;
+                    }
+                    
+                    doc.text(`• ${note}`, 25, yPosition);
+                    yPosition += 5;
+                });
             }
             
-            function clearFilters() {
-                typeFilter.value = 'all';
-                dateFilter.value = 'all';
-                filterRecords();
-            }
+            // Add footer
+            doc.setFontSize(8);
+            doc.setTextColor(100, 100, 100);
+            doc.text('Generated by TUT Health Portal', 105, 280, { align: 'center' });
             
-            // Initialize
-            filterRecords();
-        });
+            // Save the PDF
+            doc.save(`Medical_Record_${record.title.replace(/\s+/g, '_')}_${record.date}.pdf`);
+        }
     </script>
 </body>
 </html>
