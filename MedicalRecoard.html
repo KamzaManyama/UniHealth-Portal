@@ -6,24 +6,6 @@
     <title>MedSchool Portal - My Medical History</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Include jsPDF library for PDF generation -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        medblue: '#1E40AF',
-                        medlightblue: '#3B82F6',
-                        meddarkblue: '#1E3A8A',
-                        medgreen: '#10B981',
-                        medred: '#EF4444',
-                        medpurple: '#8B5CF6',
-                    }
-                }
-            }
-        }
-    </script>
     <style>
         .modal {
             transition: opacity 0.25s ease;
@@ -182,7 +164,7 @@
 
     <script>
         // Medical records data (would typically come from an API)
-       const medicalRecords = [
+        const medicalRecords = [
     {
         id: 1,
         title: "General Check-up",
@@ -691,7 +673,7 @@
 
         // Pagination variables
         let currentPage = 1;
-        const recordsPerPage = 3;
+        const recordsPerPage = 5; // Changed from 3 to 5
         let filteredRecords = [...medicalRecords];
 
         // Initialize the page
@@ -837,13 +819,13 @@
                 <div class="px-4 py-4 bg-gray-50 hidden details-content">
                     ${createRecordDetails(record.details)}
                     
-                    <!-- Download buttons -->
+                    <!-- Download buttons - removed functionality but kept for UI consistency -->
                     <div class="mt-6 flex flex-wrap gap-2">
-                        <button onclick="downloadPrescription(${record.id})" class="flex items-center gap-2 px-4 py-2 bg-medgreen text-white rounded-md hover:bg-green-600 transition-colors text-sm">
+                        <button class="flex items-center gap-2 px-4 py-2 bg-medgreen text-white rounded-md hover:bg-green-600 transition-colors text-sm">
                             <i class="fas fa-prescription"></i>
                             Download Prescription
                         </button>
-                        <button onclick="downloadFullRecord(${record.id})" class="flex items-center gap-2 px-4 py-2 bg-medblue text-white rounded-md hover:bg-blue-600 transition-colors text-sm">
+                        <button class="flex items-center gap-2 px-4 py-2 bg-medblue text-white rounded-md hover:bg-blue-600 transition-colors text-sm">
                             <i class="fas fa-file-pdf"></i>
                             Download Full Record
                         </button>
@@ -972,28 +954,56 @@
             
             // Update page numbers
             pageNumbers.innerHTML = '';
-            const maxVisiblePages = 5;
-            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
             
-            if (endPage - startPage + 1 < maxVisiblePages) {
-                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            // Always show first page
+            addPageButton(1, totalPages);
+            
+            // Add dots if needed
+            if (currentPage > 3) {
+                const dots = document.createElement('span');
+                dots.className = 'px-3 py-1 text-sm text-gray-500';
+                dots.textContent = '...';
+                pageNumbers.appendChild(dots);
             }
             
-            for (let i = startPage; i <= endPage; i++) {
-                const pageBtn = document.createElement('button');
-                pageBtn.className = `pagination-btn px-3 py-1 rounded-md border border-gray-300 text-sm hover:bg-gray-50 ${i === currentPage ? 'active' : ''}`;
-                pageBtn.textContent = i;
-                pageBtn.addEventListener('click', () => {
-                    currentPage = i;
-                    renderRecords();
-                });
-                pageNumbers.appendChild(pageBtn);
+            // Show current page and adjacent pages
+            for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+                addPageButton(i, totalPages);
+            }
+            
+            // Add dots if needed
+            if (currentPage < totalPages - 2) {
+                const dots = document.createElement('span');
+                dots.className = 'px-3 py-1 text-sm text-gray-500';
+                dots.textContent = '...';
+                pageNumbers.appendChild(dots);
+            }
+            
+            // Always show last page if there is more than one page
+            if (totalPages > 1) {
+                addPageButton(totalPages, totalPages);
             }
             
             // Update prev/next buttons
             prevPageBtn.disabled = currentPage === 1;
             nextPageBtn.disabled = currentPage === totalPages;
+        }
+
+        // Helper function to add a page button
+        function addPageButton(pageNumber, totalPages) {
+            // Skip if we're already showing this page
+            if (pageNumber < 1 || pageNumber > totalPages) return;
+            
+            const pageBtn = document.createElement('button');
+            pageBtn.className = `pagination-btn px-3 py-1 rounded-md border border-gray-300 text-sm hover:bg-gray-50 ${pageNumber === currentPage ? 'active' : ''}`;
+            pageBtn.textContent = pageNumber;
+            pageBtn.addEventListener('click', () => {
+                currentPage = pageNumber;
+                renderRecords();
+            });
+            
+            const pageNumbers = document.getElementById('page-numbers');
+            pageNumbers.appendChild(pageBtn);
         }
 
         // Navigate to previous page
@@ -1039,237 +1049,6 @@
                     icon.classList.remove('rotate-90');
                 }
             });
-        }
-
-        // Download prescription as PDF
-        function downloadPrescription(recordId) {
-            const record = medicalRecords.find(r => r.id === recordId);
-            if (!record) return;
-            
-            // Create a new PDF document
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            
-            // Add header
-            doc.setFontSize(20);
-            doc.setTextColor(30, 64, 175); // medblue
-            doc.text('MEDICAL PRESCRIPTION', 105, 20, { align: 'center' });
-            
-            // Add patient info
-            doc.setFontSize(12);
-            doc.setTextColor(0, 0, 0);
-            doc.text(`Patient: Student`, 20, 40);
-            doc.text(`Date: ${new Date(record.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, 20, 50);
-            doc.text(`Practitioner: ${record.practitioner}`, 20, 60);
-            
-            // Add diagnosis if available
-            if (record.details.diagnosis) {
-                doc.text(`Diagnosis: ${record.details.diagnosis}`, 20, 75);
-            }
-            
-            // Add prescriptions
-            let yPosition = 90;
-            if (record.details.prescriptions.length > 0) {
-                doc.setFontSize(14);
-                doc.setTextColor(30, 64, 175);
-                doc.text('PRESCRIPTION DETAILS', 20, yPosition);
-                yPosition += 10;
-                
-                doc.setFontSize(10);
-                doc.setTextColor(0, 0, 0);
-                
-                record.details.prescriptions.forEach(prescription => {
-                    if (yPosition > 250) {
-                        doc.addPage();
-                        yPosition = 20;
-                    }
-                    
-                    doc.setFont(undefined, 'bold');
-                    doc.text(`${prescription.name} (${prescription.type})`, 20, yPosition);
-                    yPosition += 7;
-                    
-                    doc.setFont(undefined, 'normal');
-                    if (prescription.dosage) {
-                        doc.text(`Dosage: ${prescription.dosage}`, 25, yPosition);
-                        yPosition += 5;
-                    }
-                    if (prescription.frequency) {
-                        doc.text(`Frequency: ${prescription.frequency}`, 25, yPosition);
-                        yPosition += 5;
-                    }
-                    if (prescription.duration) {
-                        doc.text(`Duration: ${prescription.duration}`, 25, yPosition);
-                        yPosition += 5;
-                    }
-                    if (prescription.quantity) {
-                        doc.text(`Quantity: ${prescription.quantity}`, 25, yPosition);
-                        yPosition += 5;
-                    }
-                    if (prescription.batch) {
-                        doc.text(`Batch No: ${prescription.batch}`, 25, yPosition);
-                        yPosition += 5;
-                    }
-                    
-                    doc.text(`Instructions: ${prescription.instructions}`, 25, yPosition);
-                    yPosition += 10;
-                });
-            } else {
-                doc.text('No prescriptions for this visit.', 20, yPosition);
-            }
-            
-            // Add footer
-            doc.setFontSize(8);
-            doc.setTextColor(100, 100, 100);
-            doc.text('Generated by TUT Health Portal', 105, 280, { align: 'center' });
-            
-            // Save the PDF
-            doc.save(`Prescription_${record.title.replace(/\s+/g, '_')}_${record.date}.pdf`);
-        }
-
-        // Download full medical record as PDF
-        function downloadFullRecord(recordId) {
-            const record = medicalRecords.find(r => r.id === recordId);
-            if (!record) return;
-            
-            // Create a new PDF document
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            
-            // Add header
-            doc.setFontSize(20);
-            doc.setTextColor(30, 64, 175); // medblue
-            doc.text('MEDICAL RECORD', 105, 20, { align: 'center' });
-            
-            // Add patient info
-            doc.setFontSize(12);
-            doc.setTextColor(0, 0, 0);
-            doc.text(`Patient: Student`, 20, 40);
-            doc.text(`Date: ${new Date(record.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, 20, 50);
-            doc.text(`Practitioner: ${record.practitioner}`, 20, 60);
-            doc.text(`Visit Type: ${record.title}`, 20, 70);
-            
-            // Add appointment details
-            let yPosition = 85;
-            doc.setFontSize(14);
-            doc.setTextColor(30, 64, 175);
-            doc.text('APPOINTMENT DETAILS', 20, yPosition);
-            yPosition += 10;
-            
-            doc.setFontSize(10);
-            doc.setTextColor(0, 0, 0);
-            doc.text(`Date & Time: ${record.details.appointment.dateTime}`, 25, yPosition);
-            yPosition += 5;
-            doc.text(`Duration: ${record.details.appointment.duration}`, 25, yPosition);
-            yPosition += 5;
-            doc.text(`Purpose: ${record.details.appointment.purpose}`, 25, yPosition);
-            yPosition += 5;
-            doc.text(`Location: ${record.details.appointment.location}`, 25, yPosition);
-            yPosition += 10;
-            
-            // Add diagnosis if available
-            if (record.details.diagnosis) {
-                doc.setFontSize(14);
-                doc.setTextColor(30, 64, 175);
-                doc.text('DIAGNOSIS', 20, yPosition);
-                yPosition += 10;
-                
-                doc.setFontSize(10);
-                doc.setTextColor(0, 0, 0);
-                const diagnosisLines = doc.splitTextToSize(record.details.diagnosis, 160);
-                doc.text(diagnosisLines, 25, yPosition);
-                yPosition += diagnosisLines.length * 5 + 5;
-            }
-            
-            // Add prescriptions
-            if (record.details.prescriptions.length > 0) {
-                if (yPosition > 200) {
-                    doc.addPage();
-                    yPosition = 20;
-                }
-                
-                doc.setFontSize(14);
-                doc.setTextColor(30, 64, 175);
-                doc.text('PRESCRIPTIONS & TREATMENT', 20, yPosition);
-                yPosition += 10;
-                
-                doc.setFontSize(10);
-                doc.setTextColor(0, 0, 0);
-                
-                record.details.prescriptions.forEach(prescription => {
-                    if (yPosition > 250) {
-                        doc.addPage();
-                        yPosition = 20;
-                    }
-                    
-                    doc.setFont(undefined, 'bold');
-                    doc.text(`${prescription.name} (${prescription.type})`, 25, yPosition);
-                    yPosition += 7;
-                    
-                    doc.setFont(undefined, 'normal');
-                    if (prescription.dosage) {
-                        doc.text(`Dosage: ${prescription.dosage}`, 30, yPosition);
-                        yPosition += 5;
-                    }
-                    if (prescription.frequency) {
-                        doc.text(`Frequency: ${prescription.frequency}`, 30, yPosition);
-                        yPosition += 5;
-                    }
-                    if (prescription.duration) {
-                        doc.text(`Duration: ${prescription.duration}`, 30, yPosition);
-                        yPosition += 5;
-                    }
-                    if (prescription.quantity) {
-                        doc.text(`Quantity: ${prescription.quantity}`, 30, yPosition);
-                        yPosition += 5;
-                    }
-                    if (prescription.batch) {
-                        doc.text(`Batch No: ${prescription.batch}`, 30, yPosition);
-                        yPosition += 5;
-                    }
-                    if (prescription.administration) {
-                        doc.text(`Administration: ${prescription.administration}`, 30, yPosition);
-                        yPosition += 5;
-                    }
-                    
-                    const instructionLines = doc.splitTextToSize(`Instructions: ${prescription.instructions}`, 150);
-                    doc.text(instructionLines, 30, yPosition);
-                    yPosition += instructionLines.length * 5 + 5;
-                });
-            }
-            
-            // Add medical notes if available
-            if (record.details.notes.length > 0) {
-                if (yPosition > 220) {
-                    doc.addPage();
-                    yPosition = 20;
-                }
-                
-                doc.setFontSize(14);
-                doc.setTextColor(30, 64, 175);
-                doc.text('MEDICAL NOTES', 20, yPosition);
-                yPosition += 10;
-                
-                doc.setFontSize(10);
-                doc.setTextColor(0, 0, 0);
-                
-                record.details.notes.forEach(note => {
-                    if (yPosition > 270) {
-                        doc.addPage();
-                        yPosition = 20;
-                    }
-                    
-                    doc.text(`• ${note}`, 25, yPosition);
-                    yPosition += 5;
-                });
-            }
-            
-            // Add footer
-            doc.setFontSize(8);
-            doc.setTextColor(100, 100, 100);
-            doc.text('Generated by TUT Health Portal', 105, 280, { align: 'center' });
-            
-            // Save the PDF
-            doc.save(`Medical_Record_${record.title.replace(/\s+/g, '_')}_${record.date}.pdf`);
         }
     </script>
 </body>
